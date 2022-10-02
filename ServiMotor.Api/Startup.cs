@@ -1,16 +1,18 @@
 using Microsoft.AspNetCore.Builder;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using FluentValidation;
+using MediatR;
+using ServiMotor.Features.Oils;
+using ServiMotor.Infraestructure;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ServiMotor
 {
@@ -26,8 +28,13 @@ namespace ServiMotor
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            var domainAssembly = AppDomain.CurrentDomain.GetAssemblies();
+            services.AddMediatR(domainAssembly);
+            services.AddAutoMapper(domainAssembly);
+            services.Configure<Mongosettings>(Configuration.GetSection("Mongosettings"));
             services.AddControllers();
+            services.AddSingleton<IMongoBookDBContext, MongoBookDBContext>();
+            services.AddSingleton<IOilRepository, OilRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ServiMotor", Version = "v1" });
@@ -45,11 +52,8 @@ namespace ServiMotor
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

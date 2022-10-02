@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using ServiMotor.Features.Oils;
 using System.Threading.Tasks;
 
 namespace ServiMotor.Controllers
@@ -11,18 +9,26 @@ namespace ServiMotor.Controllers
     [Route("[controller]")]
     public class OilsController : ControllerBase
     {
-        private readonly ILogger<OilsController> _logger;
+        private readonly IMediator _mediator;
 
-        public OilsController(ILogger<OilsController> logger)
+        public OilsController(IMediator mediator)
         {
-            _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            // TODO
-            return null;
+            var oils = await _mediator.Send(new GetAll.Query());
+            return Ok(oils);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Create.Command command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
     }
 }
