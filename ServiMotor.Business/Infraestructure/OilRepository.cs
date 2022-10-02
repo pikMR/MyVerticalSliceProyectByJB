@@ -1,13 +1,13 @@
-﻿using ServiMotor.Business.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ServiMotor.Business.Features.Oils.Interfaces;
+using ServiMotor.Business.Models;
+using ServiMotor.Infraestructure;
 
 namespace ServiMotor.Business.Infraestructure
 {
-    public class OilRepository : IOilRepository
+    public class OilRepository : BaseRepository<Oil>, IOilRepository
     {
+        public OilRepository(IMongoBookDBContext context) : base(context)
+        {
+        }
     }
 }
