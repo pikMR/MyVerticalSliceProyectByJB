@@ -1,8 +1,7 @@
-﻿using ServiMotor.Business.Features.Oils.Interfaces;
-using ServiMotor.Business.Models;
-using ServiMotor.Infraestructure;
+﻿using ServiMotor.Business.Models;
+using ServiMotor.Features.Oils;
 
-namespace ServiMotor.Business.Infraestructure
+namespace ServiMotor.Infraestructure
 {
     public class OilRepository : BaseRepository<Oil>, IOilRepository
     {

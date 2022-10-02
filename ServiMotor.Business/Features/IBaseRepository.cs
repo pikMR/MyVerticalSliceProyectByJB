@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServiMotor.Infraestructure
+namespace ServiMotor.Features.Interfaces
 {
     public interface IBaseRepository<TEntity> where TEntity : class
     {

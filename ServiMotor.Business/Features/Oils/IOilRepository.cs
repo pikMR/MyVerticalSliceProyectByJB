@@ -1,12 +1,7 @@
 ﻿using ServiMotor.Business.Models;
-using ServiMotor.Infraestructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ServiMotor.Features.Interfaces;
 
-namespace ServiMotor.Business.Features.Oils.Interfaces
+namespace ServiMotor.Features.Oils
 {
     public interface IOilRepository : IBaseRepository<Oil>
     {

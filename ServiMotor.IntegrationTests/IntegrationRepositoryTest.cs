@@ -1,10 +1,9 @@
 using NUnit.Framework;
-using ServiMotor.Business.Features.Oils.Interfaces;
-using ServiMotor.Business.Infraestructure;
 using System.Linq;
 using ServiMotor.Business.Models;
 using ServiMotor.Infraestructure;
 using System.Threading.Tasks;
+using ServiMotor.Features.Oils;
 
 namespace ServiMotor.IntegrationTests
 {
