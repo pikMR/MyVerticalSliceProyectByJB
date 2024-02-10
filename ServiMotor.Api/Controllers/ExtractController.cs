@@ -1,17 +1,17 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ServiMotor.Features.Oils;
+using ServiMotor.Features.Extracts;
 using System.Threading.Tasks;
 
 namespace ServiMotor.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OilsController : ControllerBase
+    public class ExtractController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public OilsController(IMediator mediator)
+        public ExtractController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -19,8 +19,8 @@ namespace ServiMotor.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var oils = await _mediator.Send(new GetAll.Query());
-            return Ok(oils);
+            var extracts = await _mediator.Send(new GetAll.Query());
+            return Ok(extracts);
         }
 
         [HttpPost]

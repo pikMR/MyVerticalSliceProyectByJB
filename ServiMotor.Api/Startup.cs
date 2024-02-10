@@ -10,9 +10,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
-using ServiMotor.Features.Oils;
+using ServiMotor.Features.Extracts;
 using ServiMotor.Infraestructure;
 using System;
+using ServiMotor.Features.Interfaces;
+using ServiMotor.Business.Models;
 
 namespace ServiMotor
 {
@@ -34,7 +36,7 @@ namespace ServiMotor
             services.Configure<Mongosettings>(Configuration.GetSection("Mongosettings"));
             services.AddControllers();
             services.AddSingleton<IMongoBookDBContext, MongoBookDBContext>();
-            services.AddSingleton<IOilRepository, OilRepository>();
+            services.AddScoped(typeof(IBaseRepository<Extract>), typeof(BaseRepository<>));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ServiMotor", Version = "v1" });

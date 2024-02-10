@@ -1,5 +1,5 @@
 ﻿
-namespace ServiMotor.Features.Oils
+namespace ServiMotor.Features.Extracts
 {
     public class Delete
     {

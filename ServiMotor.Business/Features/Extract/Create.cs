@@ -2,10 +2,11 @@
 using FluentValidation;
 using MediatR;
 using ServiMotor.Business.Models;
+using ServiMotor.Features.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ServiMotor.Features.Oils
+namespace ServiMotor.Features.Extracts
 {
     public class Create
     {
@@ -24,10 +25,10 @@ namespace ServiMotor.Features.Oils
 
         public class QueryHandler : IRequestHandler<Query, Command>
         {
-            private readonly IOilRepository _repository;
+            private readonly IBaseRepository<Extract> _repository;
             private readonly IMapper _mapper;
 
-            public QueryHandler(IOilRepository repository, IMapper mapper)
+            public QueryHandler(IBaseRepository<Extract> repository, IMapper mapper)
             {
                 _repository = repository;
                 _mapper = mapper;
@@ -70,23 +71,23 @@ namespace ServiMotor.Features.Oils
 
         public class CommandHandler : IRequestHandler<Command, string>
         {
-            private readonly IOilRepository _repository;
+            private readonly IBaseRepository<Extract> _repository;
 
-            public CommandHandler(IOilRepository repository) => _repository = repository;
+            public CommandHandler(IBaseRepository<Extract> repository) => _repository = repository;
 
             public async Task<string> Handle(Command request, CancellationToken cancellationToken)
             {
-                Oil oil;
+                Extract extract;
                 if (request.Id == null)
                 {
-                    oil = new Oil();
-                    await _repository.Create(oil);
+                    extract = new Extract();
+                    await _repository.Create(extract);
                 }
                 else
                 {
-                    oil = await _repository.Get(request.Id);
+                    extract = await _repository.Get(request.Id);
                 }
-                return oil._id.ToString();
+                return extract._id.ToString();
             }
         }
 
@@ -94,7 +95,7 @@ namespace ServiMotor.Features.Oils
         {
             public MappingProfile()
             {
-                CreateProjection<Oil, Command>();
+                CreateProjection<Extract, Command>();
             }
         }
     }

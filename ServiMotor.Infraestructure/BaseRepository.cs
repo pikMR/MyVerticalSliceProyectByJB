@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace ServiMotor.Infraestructure
 {
-    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         protected readonly IMongoBookDBContext _mongoContext;
         protected IMongoCollection<TEntity> _dbCollection;
 
-        protected BaseRepository(IMongoBookDBContext context)
+        public BaseRepository(IMongoBookDBContext context)
         {
             _mongoContext = context;
             _dbCollection = _mongoContext.GetCollection<TEntity>(typeof(TEntity).Name);

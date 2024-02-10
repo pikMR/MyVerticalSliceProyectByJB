@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using ServiMotor.Business.Models;
+using ServiMotor.Features.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ServiMotor.Features.Oils
+namespace ServiMotor.Features.Extracts
 {
     public class GetAll
     {
@@ -24,9 +25,9 @@ namespace ServiMotor.Features.Oils
 
         public record Result
         {
-            public IEnumerable<Oil> Productos { get; init; }
+            public IEnumerable<Extract> Extracts { get; init; }
 
-            public record Oil
+            public record Extract
             {
                 public string _id { get; init; }
                 public string Name { get; init; }
@@ -37,9 +38,9 @@ namespace ServiMotor.Features.Oils
         public class Handler : IRequestHandler<Query, Result>
         {
             private readonly IMapper _mapper;
-            private readonly IOilRepository _repository;
+            private readonly IBaseRepository<Extract> _repository;
 
-            public Handler(IOilRepository repository, IMapper mapper)
+            public Handler(IBaseRepository<Extract> repository, IMapper mapper)
             {
                 _repository = repository;
                 _mapper = mapper;
@@ -47,11 +48,11 @@ namespace ServiMotor.Features.Oils
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var productos = (await _repository.Get());
+                var extracts = (await _repository.Get());
 
                 return new Result
                 {
-                    Productos = _mapper.Map<IEnumerable<Result.Oil>>(productos)
+                    Extracts = _mapper.Map<IEnumerable<Result.Extract>>(extracts)
                 };
             }
         }
