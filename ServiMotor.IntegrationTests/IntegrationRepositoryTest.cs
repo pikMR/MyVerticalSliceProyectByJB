@@ -15,16 +15,17 @@ namespace ServiMotor.IntegrationTests
         private IBaseRepository<Extract> _repository;
         private Faker<Extract> fakerExtract;
 
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public void Setup() 
         {
             DbFixture DbFix = new();
             DbFix.Dispose();
             _repository = new BaseRepository<Extract>(new MongoBookDBContext(DbFix.DbContextSettings));
-            fakerExtract = GetFakerExtract();
+            _repository.DeleteAll();
+            fakerExtract = HelperBogus.GetFakerExtract();
         }
 
-        [Test]
+        [Test, Order(1)]
         public async Task CheckCreateAndGetAsync()
         {
            var extracts = fakerExtract.GenerateBetween(10, 20);
@@ -39,26 +40,24 @@ namespace ServiMotor.IntegrationTests
             Assert.Pass("Se han creado y obtenido datos de MongoDB");
         }
 
-        [Test]
+        [Test, Order(2)]
         public async Task CheckUpdateAndGetAsync()
         {
+            var newElement = fakerExtract.Generate(1).First();
+            var firstElement = await _repository.GetFirstAsync();
+            var idFirstElement = firstElement._id.ToString();
+            var detailFirstElement = firstElement.Detail;
 
-        }
+            firstElement.Bank = newElement.Bank;
+            firstElement.Description = newElement.Description;
+            _repository.Update(firstElement);
+            var updatedElement = await _repository.Get(idFirstElement);
 
-        private Faker<Extract> GetFakerExtract()
-        {
-            return = new Faker<Extract>()
-                .RuleFor(u => u.Balance, (f, u) => f.Finance.Amount(-1000, 1000, 2))
-                .RuleFor(u => u.Date, (f, u) => f.Date.Recent())
-                .RuleFor(u => u.Description, (f, u) => f.Commerce.Department())
-                .RuleFor(u => u.Detail, (f, u) => f.Lorem.Word())
-                .RuleFor(u => u.Bank, (f, u) => new Faker<Bank>()
-                    .RuleFor(b => b.Name, (b, s) => b.Company.CompanyName())
-                )
-                .RuleFor(u => u.Bank, (f, u) => new Faker<Bank>()
-                    .RuleFor(b => b.Name, (b, s) => b.Company.CompanyName()))
-                .RuleFor(u => u.BranchOffice, (f, u) => new Faker<BranchOffice>()
-                    .RuleFor(b => b.Name, (b, s) => b.Name.FullName(Gender.Male)));
+            // elements that change
+            Assert.AreEqual(newElement.Description, updatedElement.Description);
+            Assert.AreEqual(newElement.Bank, updatedElement.Bank);
+            // detail not change
+            Assert.AreEqual(detailFirstElement, updatedElement.Detail);
         }
     }
 }

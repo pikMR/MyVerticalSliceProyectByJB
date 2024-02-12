@@ -24,11 +24,10 @@ namespace ServiMotor.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Create.Command command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return Created("/Extract",result);
         }
     }
 }

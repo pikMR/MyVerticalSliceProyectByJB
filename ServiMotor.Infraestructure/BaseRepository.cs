@@ -4,6 +4,7 @@ using ServiMotor.Features.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,6 +37,11 @@ namespace ServiMotor.Infraestructure
 
         }
 
+        public void DeleteAll()
+        {
+            _dbCollection.DeleteManyAsync(Builders<TEntity>.Filter.Empty);
+        }
+
         public async Task<TEntity> Get(string id)
         {
             //ex. 5dc1039a1521eaa36835e541
@@ -49,14 +55,25 @@ namespace ServiMotor.Infraestructure
         }
         public async Task<IEnumerable<TEntity>> Get()
         {
+            //var other = await _dbCollection.Find(FilterDefinition<TEntity>.Empty).FirstOrDefaultAsync();
             var all = await _dbCollection.FindAsync(Builders<TEntity>.Filter.Empty);
             return await all.ToListAsync();
+        }
+
+        public async Task<TEntity> GetFirstAsync()
+        {
+            return await _dbCollection.Find(FilterDefinition<TEntity>.Empty).FirstOrDefaultAsync();
         }
 
         public virtual void Update(TEntity obj)
         {
             var id = obj.GetType().GetProperty("_id").GetValue(obj,null);
             _dbCollection.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", id), obj);
+        }
+
+        public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter)
+        {
+                return await _dbCollection.Find(filter).FirstOrDefaultAsync();
         }
     }
 }

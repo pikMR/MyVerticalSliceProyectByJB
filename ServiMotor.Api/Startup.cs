@@ -33,10 +33,11 @@ namespace ServiMotor
             var domainAssembly = AppDomain.CurrentDomain.GetAssemblies();
             services.AddMediatR(domainAssembly);
             services.AddAutoMapper(domainAssembly);
+            // services.AddAutoMapper(typeof(MappingProfile));
             services.Configure<Mongosettings>(Configuration.GetSection("Mongosettings"));
             services.AddControllers();
             services.AddSingleton<IMongoBookDBContext, MongoBookDBContext>();
-            services.AddScoped(typeof(IBaseRepository<Extract>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ServiMotor", Version = "v1" });

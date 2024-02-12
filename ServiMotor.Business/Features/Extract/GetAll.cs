@@ -2,6 +2,7 @@
 using MediatR;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -29,9 +30,13 @@ namespace ServiMotor.Features.Extracts
 
             public record Extract
             {
-                public string _id { get; init; }
-                public string Name { get; init; }
-                public string Unit { get; init; }
+                public string Id { get; set; }
+                public string Description { get; set; }
+                public string BankName { get; set; }
+                public DateTime Date { get; set; }
+                public decimal Balance { get; set; }
+                public string Detail { get; set; }
+                public string BranchOfficeName { get; set; }
             }
         }
 
@@ -48,7 +53,7 @@ namespace ServiMotor.Features.Extracts
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var extracts = (await _repository.Get());
+                var extracts = await _repository.Get();
 
                 return new Result
                 {

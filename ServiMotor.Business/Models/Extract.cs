@@ -7,6 +7,11 @@ namespace ServiMotor.Business.Models
 {
     public class Extract : RootEntity
     {
+        public Extract()
+        {
+            this._id = ObjectId.GenerateNewId();
+        }
+
         [Required]
         [Display(Name = "Descripcion")]
         public string Description { get; set; }

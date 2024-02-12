@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.17" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
@@ -27,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ServiMotor.API\ServiMotorAPI.csproj" />
     <ProjectReference Include="..\ServiMotor.Business\ServiMotor.Business.csproj" />
     <ProjectReference Include="..\ServiMotor.Infraestructure\ServiMotor.Infraestructure.csproj" />
   </ItemGroup>

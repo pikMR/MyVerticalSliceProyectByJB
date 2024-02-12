@@ -1,10 +1,17 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Interfaces;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace ServiMotor.Features.Extracts
 {
@@ -51,9 +58,13 @@ namespace ServiMotor.Features.Extracts
 
         public class Command : IRequest<string>
         {
-            public string Id { get; init; }
-            public string Name { get; init; }
-            public string Unit { get; init; }
+            public string Id { get; set; }
+            public string Description { get; set; }
+            public string BankName { get; set; }
+            public DateTime Date { get; set; }
+            public decimal Balance { get; set; }
+            public string Detail { get; set; }
+            public string BranchOfficeName { get; set; }
 
             public Command()
             {
@@ -64,38 +75,39 @@ namespace ServiMotor.Features.Extracts
         {
             public CommandValidator()
             {
-                RuleFor(m => m.Unit).NotNull().Length(0, 8);
-                RuleFor(m => m.Name).NotNull();
+                RuleFor(m => m.Description).NotNull();
+                RuleFor(m => m.Date).NotNull().GreaterThan(DateTime.MinValue);
+                RuleFor(m => m.Balance).NotNull();
+                RuleFor(m => m.BankName).Length(0, 16);
+                RuleFor(m => m.BranchOfficeName).Length(0, 16);
             }
         }
 
         public class CommandHandler : IRequestHandler<Command, string>
         {
-            private readonly IBaseRepository<Extract> _repository;
+            private readonly IBaseRepository<Extract> _repositoryExtract;
+            private readonly IMapper _mapper;
 
-            public CommandHandler(IBaseRepository<Extract> repository) => _repository = repository;
+            public CommandHandler(IBaseRepository<Extract> repository, IMapper mapper)
+            {
+                _repositoryExtract = repository;
+                _mapper = mapper;
+            }
 
             public async Task<string> Handle(Command request, CancellationToken cancellationToken)
             {
-                Extract extract;
+                Extract extract = null;
                 if (request.Id == null)
                 {
-                    extract = new Extract();
-                    await _repository.Create(extract);
+                    extract = _mapper.Map<Extract>(request);
+                    await _repositoryExtract.Create(extract);
                 }
                 else
                 {
-                    extract = await _repository.Get(request.Id);
+                    extract = await _repositoryExtract.Get(request.Id);
                 }
-                return extract._id.ToString();
-            }
-        }
 
-        public class MappingProfile : Profile
-        {
-            public MappingProfile()
-            {
-                CreateProjection<Extract, Command>();
+                return extract._id.ToString();
             }
         }
     }
