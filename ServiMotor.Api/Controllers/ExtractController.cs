@@ -29,5 +29,12 @@ namespace ServiMotor.Controllers
             var result = await _mediator.Send(command);
             return Created("/Extract",result);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(Update.Command command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
     }
 }

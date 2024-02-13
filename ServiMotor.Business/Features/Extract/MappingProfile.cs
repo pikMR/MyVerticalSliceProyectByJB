@@ -16,6 +16,10 @@ namespace ServiMotor.Features.Extracts
             CreateMap<Create.Command, Extract>()
                 .ForMember(x => x.BranchOffice, src => src.MapFrom(s => new BranchOffice(s.BranchOfficeName)))
                 .ForMember(x => x.Bank, src => src.MapFrom(s => new Bank(s.BankName)));
+            CreateMap<Update.Command, Extract>()
+                .ForMember(x=> x._id, src => src.MapFrom(s=> ObjectId.Parse(s.Id)))
+                .ForMember(x => x.BranchOffice, src => src.MapFrom(s => new BranchOffice(s.BranchOfficeName)))
+                .ForMember(x => x.Bank, src => src.MapFrom(s => new Bank(s.BankName)));
         }
     }
 }

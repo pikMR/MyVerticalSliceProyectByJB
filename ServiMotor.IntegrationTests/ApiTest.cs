@@ -100,6 +100,42 @@ namespace ServiMotor.IntegrationTests
             Assert.AreEqual("Test Branch Office", getExtract.BranchOffice.Name);
         }
 
+        [Test]
+        public async Task It_should_update_one_extract()
+        {
+            var exampleExtract = fakerExtract.Generate(1).First();
+            await _repository.Create(exampleExtract);
+
+            var updatedExtract = new Update.Command
+            {
+                Id = exampleExtract._id.ToString(),
+                Description = "Test Description 2",
+                BankName = "Test Bank 2",
+                Date = DateTime.Now,
+                Balance = 101.50m,
+                Detail = "Test Detail 2",
+                BranchOfficeName = "Test Branch Office 2"
+            };
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(updatedExtract), Encoding.UTF8, "application/json");
+
+            // Act
+            var response = await _client.PutAsync("/Extract", jsonContent);
+            var idResponse = await response.Content.ReadAsStringAsync();
+            var getExtract = await _repository.GetFirstAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(idResponse);
+            Assert.NotNull(getExtract);
+            Assert.AreEqual("Test Description 2", getExtract.Description);
+            Assert.AreEqual("Test Bank 2", getExtract.Bank.Name);
+            Assert.AreEqual(101.50m, getExtract.Balance);
+            Assert.AreEqual("Test Detail 2", getExtract.Detail);
+            Assert.AreEqual("Test Branch Office 2", getExtract.BranchOffice.Name);
+        }
+
         public class ExtractContainer
         {
             public GetAll.Result.Extract[] Extracts { get; set; }
