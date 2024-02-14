@@ -17,45 +17,6 @@ namespace ServiMotor.Features.Extracts
 {
     public class Update
     {
-        public class Query : IRequest<Command>
-        {
-            public string Id { get; set; }
-        }
-
-        public class QueryValidator : AbstractValidator<Query>
-        {
-            public QueryValidator()
-            {
-                RuleFor(m => m.Id).NotNull();
-            }
-        }
-
-        public class QueryHandler : IRequestHandler<Query, Command>
-        {
-            private readonly IBaseRepository<Extract> _repository;
-            private readonly IMapper _mapper;
-
-            public QueryHandler(IBaseRepository<Extract> repository, IMapper mapper)
-            {
-                _repository = repository;
-                _mapper = mapper;
-            }
-
-            public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
-            {
-                Command model;
-                if (request.Id == null)
-                {
-                    model = new Command();
-                }
-                else
-                {
-                    model = _mapper.Map<Command>(await _repository.Get(request.Id));
-                }
-                return model;
-            }
-        }
-
         public class Command : IRequest<string>
         {
             public string Id { get; set; }
