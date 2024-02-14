@@ -24,7 +24,7 @@ namespace ServiMotor.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Command commanda)
+        public async Task<IActionResult> Create(Create.Command commanda)
         {
             var result = await _mediator.Send(commanda);
             return Created("/Extract",result);
