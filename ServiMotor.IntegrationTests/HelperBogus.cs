@@ -26,5 +26,19 @@ namespace ServiMotor.IntegrationTests
                 .RuleFor(u => u.BranchOffice, (f, u) => new Faker<BranchOffice>()
                     .RuleFor(b => b.Name, (b, s) => b.Name.FullName(Gender.Male)));
         }
+
+        public static Faker<Bank> GetFakerBank()
+        {
+            return new Faker<Bank>()
+                .RuleFor(b => b.Name, (b, s) => b.Company.CompanyName())
+                .RuleFor(b => b._id, (b, s) => MongoDB.Bson.ObjectId.GenerateNewId());
+        }
+
+        public static Faker<BranchOffice> GetFakerBranchOffice()
+        {
+            return new Faker<BranchOffice>()
+                .RuleFor(b => b.Name, (b, s) => b.Company.CompanyName())
+                .RuleFor(b => b._id, (b, s) => MongoDB.Bson.ObjectId.GenerateNewId());
+        }
     }
 }

@@ -21,7 +21,7 @@ using static ServiMotor.Features.Extracts.GetAll.Result;
 
 namespace ServiMotor.IntegrationTests
 {
-    public class ApiTest
+    public class ExtractApiTest
     {
         private IBaseRepository<Business.Models.Extract> _repository;
         private Faker<Business.Models.Extract> fakerExtract;

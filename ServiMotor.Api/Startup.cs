@@ -40,6 +40,7 @@ namespace ServiMotor
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddSwaggerGen(c =>
             {
+                c.CustomSchemaIds(i => i.FullName);
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ServiMotor", Version = "v1" });
             });
         }

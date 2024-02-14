@@ -10,7 +10,7 @@ using static Bogus.DataSets.Name;
 
 namespace ServiMotor.IntegrationTests
 {
-    public class IntegrationRepositoryTest
+    public class ExtractRepositoryTest
     {
         private IBaseRepository<Extract> _repository;
         private Faker<Extract> fakerExtract;
