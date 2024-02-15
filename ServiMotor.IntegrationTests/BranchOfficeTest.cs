@@ -46,7 +46,7 @@ namespace ServiMotor.IntegrationTests
             var newElement = fakerBranchOffice.Generate(1).First();
             var firstElement = await _repository.GetFirstAsync();
             firstElement.Name = newElement.Name + "_updated";
-            _repository.Update(firstElement);
+            await _repository.UpdateAsync(firstElement);
             var updatedElement = await _repository.Get(firstElement._id.ToString());
 
             // elements that change

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServiMotor.Infraestructure
@@ -65,10 +66,11 @@ namespace ServiMotor.Infraestructure
             return await _dbCollection.Find(FilterDefinition<TEntity>.Empty).FirstOrDefaultAsync();
         }
 
-        public virtual void Update(TEntity obj)
+        public async Task<TEntity> UpdateAsync(TEntity obj)
         {
             var id = obj.GetType().GetProperty("_id").GetValue(obj,null);
-            _dbCollection.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", id), obj);
+            await _dbCollection.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", id), obj);
+            return obj;
         }
 
         public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter)

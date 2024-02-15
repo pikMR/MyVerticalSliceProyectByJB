@@ -57,7 +57,7 @@ namespace ServiMotor.Features.Extracts
                 if (request.Id != null)
                 {
                     extract = _mapper.Map<Extract>(request);
-                    _repositoryExtract.Update(extract);
+                    await _repositoryExtract.UpdateAsync(extract);
                 }
 
                 return extract._id.ToString();

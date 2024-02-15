@@ -48,7 +48,7 @@ namespace ServiMotor.IntegrationTests
             var idFirstElement = firstElement._id.ToString();
             var nameFirstElement = firstElement.Name;
             firstElement.Name = newElement.Name + "_updated";
-            _repository.Update(firstElement);
+            await _repository.UpdateAsync(firstElement);
             var updatedElement = await _repository.Get(idFirstElement);
 
             // elements that change

@@ -50,7 +50,7 @@ namespace ServiMotor.IntegrationTests
 
             firstElement.Bank = newElement.Bank;
             firstElement.Description = newElement.Description;
-            _repository.Update(firstElement);
+            await _repository.UpdateAsync(firstElement);
             var updatedElement = await _repository.Get(idFirstElement);
 
             // elements that change
