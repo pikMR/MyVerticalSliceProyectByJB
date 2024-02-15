@@ -37,5 +37,13 @@ namespace ServiMotor.Business.Models
         {
             return HashCode.Combine(_id, Name);
         }
+
+        internal void SetId(string idBranchOffice)
+        {
+            if (!string.IsNullOrEmpty(idBranchOffice))
+            {
+                this._id = ObjectId.Parse(idBranchOffice);
+            }
+        }
     }
 }

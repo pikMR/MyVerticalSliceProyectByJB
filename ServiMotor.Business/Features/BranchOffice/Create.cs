@@ -34,12 +34,12 @@ namespace ServiMotor.Features.BranchOffices
 
         public class CommandHandler : IRequestHandler<Command, string>
         {
-            private readonly IBaseRepository<BranchOffice> _repositoryExtract;
+            private readonly IBaseRepository<BranchOffice> _repositoryBranchOffice;
             private readonly IMapper _mapper;
 
             public CommandHandler(IBaseRepository<BranchOffice> repository, IMapper mapper)
             {
-                _repositoryExtract = repository;
+                _repositoryBranchOffice = repository;
                 _mapper = mapper;
             }
 
@@ -49,11 +49,11 @@ namespace ServiMotor.Features.BranchOffices
                 if (request.Id == null)
                 {
                     branchOffice = _mapper.Map<BranchOffice>(request);
-                    await _repositoryExtract.Create(branchOffice);
+                    await _repositoryBranchOffice.Create(branchOffice);
                 }
                 else
                 {
-                    branchOffice = await _repositoryExtract.Get(request.Id);
+                    branchOffice = await _repositoryBranchOffice.Get(request.Id);
                 }
 
                 return branchOffice._id.ToString();

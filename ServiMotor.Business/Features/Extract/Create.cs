@@ -48,19 +48,34 @@ namespace ServiMotor.Features.Extracts
         {
             private readonly IBaseRepository<Extract> _repositoryExtract;
             private readonly IMapper _mapper;
+            private readonly IMediator _mediator;
 
-            public CommandHandler(IBaseRepository<Extract> repository, IMapper mapper)
+            public CommandHandler(IBaseRepository<Extract> repository, IMapper mapper, IMediator mediator)
             {
                 _repositoryExtract = repository;
                 _mapper = mapper;
+                _mediator = mediator;
             }
 
             public async Task<string> Handle(Command request, CancellationToken cancellationToken)
             {
-                Extract extract = null;
+                Extract extract;
                 if (request.Id == null)
                 {
+                    var idBank = await _mediator.Send(new Banks.Create.Command()
+                    {
+                        Name = request.BankName
+                    }, cancellationToken);
+
+                    var idBranchOffice = await _mediator.Send(new BranchOffices.Create.Command()
+                    {
+                        Name = request.BranchOfficeName
+                    }, cancellationToken);
+
                     extract = _mapper.Map<Extract>(request);
+                    extract.Bank.SetId(idBank);
+                    extract.BranchOffice.SetId(idBranchOffice);
+
                     await _repositoryExtract.Create(extract);
                 }
                 else

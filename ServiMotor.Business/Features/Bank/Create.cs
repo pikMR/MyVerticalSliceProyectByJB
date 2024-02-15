@@ -34,26 +34,27 @@ namespace ServiMotor.Features.Banks
 
         public class CommandHandler : IRequestHandler<Command, string>
         {
-            private readonly IBaseRepository<Bank> _repositoryExtract;
+            private readonly IBaseRepository<Bank> _repositoryBank;
             private readonly IMapper _mapper;
 
             public CommandHandler(IBaseRepository<Bank> repository, IMapper mapper)
             {
-                _repositoryExtract = repository;
+                _repositoryBank = repository;
                 _mapper = mapper;
             }
 
             public async Task<string> Handle(Command request, CancellationToken cancellationToken)
             {
-                Bank bank = null;
-                if (request.Id == null)
+                Bank bank = await _repositoryBank.GetFirstAsync(x => x.Name.Equals(request.Name.Trim()));
+
+                if (bank == null || request.Id == null)
                 {
                     bank = _mapper.Map<Bank>(request);
-                    await _repositoryExtract.Create(bank);
+                    await _repositoryBank.Create(bank);
                 }
                 else
                 {
-                    bank = await _repositoryExtract.Get(request.Id);
+                    bank ??= await _repositoryBank.Get(request.Id);
                 }
 
                 return bank._id.ToString();

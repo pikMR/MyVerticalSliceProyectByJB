@@ -33,5 +33,13 @@ namespace ServiMotor.Business.Models
         {
             return HashCode.Combine(_id, Name);
         }
+
+        internal void SetId(string idBank)
+        {
+            if (!string.IsNullOrEmpty(idBank))
+            {
+                this._id = ObjectId.Parse(idBank);
+            }
+        }
     }
 }
