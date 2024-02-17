@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MongoDB.Bson;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Extracts;
 using System;
@@ -15,9 +16,12 @@ namespace ServiMotor.Features.Banks
         public MappingProfile()
         {
             // extracts
-            CreateMap<Bank, Result.Bank>()
+            CreateMap<Bank, Result.BankDto>()
                 .ForMember(x => x.Id, src => src.MapFrom(s => s._id.ToString()));
-            CreateMap<Create.Command, Bank>();
+            CreateMap<Create.Command, Bank>()
+                .ForMember(x => x._id, src => src.MapFrom(s => ObjectId.Parse(s.Id)));
+            CreateMap<Update.Command, Bank>()
+                .ForMember(x => x._id, src => src.MapFrom(s => ObjectId.Parse(s.Id)));
         }
     }
 }
