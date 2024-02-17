@@ -21,11 +21,11 @@ namespace ServiMotor.Features.Extracts
         {
             public string Id { get; set; }
             public string Description { get; set; }
-            public string BankName { get; set; }
+            public Banks.Create.Command Bank { get; set; }
             public DateTime Date { get; set; }
             public decimal Balance { get; set; }
             public string Detail { get; set; }
-            public string BranchOfficeName { get; set; }
+            public BranchOffices.Create.Command BranchOffice { get; set; }
 
             public Command()
             {
@@ -39,8 +39,6 @@ namespace ServiMotor.Features.Extracts
                 RuleFor(m => m.Description).NotNull();
                 RuleFor(m => m.Date).NotNull().GreaterThan(DateTime.MinValue);
                 RuleFor(m => m.Balance).NotNull();
-                RuleFor(m => m.BankName).Length(0, 16);
-                RuleFor(m => m.BranchOfficeName).Length(0, 16);
             }
         }
 
@@ -62,20 +60,11 @@ namespace ServiMotor.Features.Extracts
                 Extract extract;
                 if (request.Id == null)
                 {
-                    var idBank = await _mediator.Send(new Banks.Create.Command()
-                    {
-                        Name = request.BankName
-                    }, cancellationToken);
-
-                    var idBranchOffice = await _mediator.Send(new BranchOffices.Create.Command()
-                    {
-                        Name = request.BranchOfficeName
-                    }, cancellationToken);
-
+                    var bank = await _mediator.Send(request.Bank, cancellationToken);
+                    var branchOffice = await _mediator.Send(request.BranchOffice, cancellationToken);
                     extract = _mapper.Map<Extract>(request);
-                    extract.Bank.SetId(idBank);
-                    extract.BranchOffice.SetId(idBranchOffice);
-
+                    extract.BranchOffice = branchOffice;
+                    extract.Bank = bank;
                     await _repositoryExtract.Create(extract);
                 }
                 else
