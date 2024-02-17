@@ -27,9 +27,9 @@ namespace ServiMotor.Features.Banks
 
         public record Result
         {
-            public IEnumerable<Bank> Banks { get; init; }
+            public IEnumerable<BankDto> Banks { get; init; }
 
-            public record Bank
+            public record BankDto
             {
                 public string Id { get; set; }
                 public string Name { get; set; }
@@ -53,7 +53,7 @@ namespace ServiMotor.Features.Banks
 
                 return new Result
                 {
-                    Banks = _mapper.Map<IEnumerable<Result.Bank>>(banks)
+                    Banks = _mapper.Map<IEnumerable<Result.BankDto>>(banks)
                 };
             }
         }

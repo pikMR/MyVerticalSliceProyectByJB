@@ -27,9 +27,9 @@ namespace ServiMotor.Features.BranchOffices
 
         public record Result
         {
-            public IEnumerable<BranchOffice> BranchOffices { get; init; }
+            public IEnumerable<BranchOfficeDto> BranchOffices { get; init; }
 
-            public record BranchOffice
+            public record BranchOfficeDto
             {
                 public string Id { get; set; }
                 public string Name { get; set; }
@@ -53,7 +53,7 @@ namespace ServiMotor.Features.BranchOffices
 
                 return new Result
                 {
-                    BranchOffices = _mapper.Map<IEnumerable<Result.BranchOffice>>(branchOffices)
+                    BranchOffices = _mapper.Map<IEnumerable<Result.BranchOfficeDto>>(branchOffices)
                 };
             }
         }

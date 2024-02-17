@@ -26,9 +26,9 @@ namespace ServiMotor.Features.Extracts
 
         public record Result
         {
-            public IEnumerable<Extract> Extracts { get; init; }
+            public IEnumerable<ExtractDto> Extracts { get; init; }
 
-            public record Extract
+            public record ExtractDto
             {
                 public string Id { get; set; }
                 public string Description { get; set; }
@@ -57,7 +57,7 @@ namespace ServiMotor.Features.Extracts
 
                 return new Result
                 {
-                    Extracts = _mapper.Map<IEnumerable<Result.Extract>>(extracts)
+                    Extracts = _mapper.Map<IEnumerable<Result.ExtractDto>>(extracts)
                 };
             }
         }
