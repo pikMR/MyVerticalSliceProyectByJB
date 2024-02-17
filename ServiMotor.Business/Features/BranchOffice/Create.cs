@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
+using MongoDB.Bson;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Interfaces;
 using System;
@@ -9,12 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static ServiMotor.Features.Banks.GetAll.Result;
 
 namespace ServiMotor.Features.BranchOffices
 {
     public class Create
     {
-        public class Command : IRequest<string>
+        public class Command : IRequest<BranchOffice>
         {
             public string Id { get; set; }
             public string Name { get; set; }
@@ -32,31 +34,45 @@ namespace ServiMotor.Features.BranchOffices
             }
         }
 
-        public class CommandHandler : IRequestHandler<Command, string>
+        public class CommandHandler : IRequestHandler<Command, BranchOffice>
         {
-            private readonly IBaseRepository<BranchOffice> _repositoryBranchOffice;
+            private readonly IBaseRepository<BranchOffice> _repository;
             private readonly IMapper _mapper;
 
             public CommandHandler(IBaseRepository<BranchOffice> repository, IMapper mapper)
             {
-                _repositoryBranchOffice = repository;
+                _repository = repository;
                 _mapper = mapper;
             }
 
-            public async Task<string> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<BranchOffice> Handle(Command request, CancellationToken cancellationToken)
             {
-                BranchOffice branchOffice = null;
-                if (request.Id == null)
+                var idBranchOffice = request.Id;
+                BranchOffice branchOffice;
+
+                if (idBranchOffice == null)
                 {
-                    branchOffice = _mapper.Map<BranchOffice>(request);
-                    await _repositoryBranchOffice.Create(branchOffice);
+                    branchOffice = await _repository.GetFirstAsync(x => x.Name.Equals(request.Name.Trim()));
+                    if (branchOffice == null)
+                    {
+                        branchOffice = _mapper.Map<BranchOffice>(request);
+                        await _repository.Create(branchOffice);
+                    }
+
+                    return branchOffice;
                 }
                 else
                 {
-                    branchOffice = await _repositoryBranchOffice.Get(request.Id);
+                    var id = ObjectId.Parse(idBranchOffice);
+                    branchOffice = await _repository.GetFirstAsync(x => x._id.Equals(id));
+
+                    if (branchOffice == null)
+                    {
+                        throw new ArgumentException($"BranchOffice with id {id} not exist");
+                    }
                 }
 
-                return branchOffice._id.ToString();
+                return branchOffice;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
+using MongoDB.Bson;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Interfaces;
 using System;
@@ -14,7 +15,7 @@ namespace ServiMotor.Features.Banks
 {
     public class Create
     {
-        public class Command : IRequest<string>
+        public class Command : IRequest<Bank>
         {
             public string Id { get; set; }
             public string Name { get; set; }
@@ -32,32 +33,45 @@ namespace ServiMotor.Features.Banks
             }
         }
 
-        public class CommandHandler : IRequestHandler<Command, string>
+        public class CommandHandler : IRequestHandler<Command, Bank>
         {
-            private readonly IBaseRepository<Bank> _repositoryBank;
+            private readonly IBaseRepository<Bank> _repository;
             private readonly IMapper _mapper;
 
             public CommandHandler(IBaseRepository<Bank> repository, IMapper mapper)
             {
-                _repositoryBank = repository;
+                _repository = repository;
                 _mapper = mapper;
             }
 
-            public async Task<string> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Bank> Handle(Command request, CancellationToken cancellationToken)
             {
-                Bank bank = await _repositoryBank.GetFirstAsync(x => x.Name.Equals(request.Name.Trim()));
+                var idBank = request.Id;
+                Bank bank;
 
-                if (bank == null || request.Id == null)
+                if(idBank == null)
                 {
-                    bank = _mapper.Map<Bank>(request);
-                    await _repositoryBank.Create(bank);
+                    bank = await _repository.GetFirstAsync(x => x.Name.Equals(request.Name.Trim()));
+                    if(bank == null)
+                    {
+                        bank = _mapper.Map<Bank>(request);
+                        await _repository.Create(bank);
+                    }
+
+                    return bank;
                 }
                 else
                 {
-                    bank ??= await _repositoryBank.Get(request.Id);
+                    var id = ObjectId.Parse(idBank);
+                    bank = await _repository.GetFirstAsync(x => x._id.Equals(id));
+                    
+                    if(bank == null)
+                    {
+                        throw new ArgumentException($"Bank with id {id} not exist");
+                    }
                 }
 
-                return bank._id.ToString();
+                return bank;
             }
         }
     }
