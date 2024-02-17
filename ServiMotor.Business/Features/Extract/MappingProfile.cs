@@ -11,15 +11,11 @@ namespace ServiMotor.Features.Extracts
         public MappingProfile()
         {
             CreateMap<Extract, Create.Command>();
-            CreateMap<Extract, Result.Extract>()
+            CreateMap<Extract, Result.ExtractDto>()
                 .ForMember(x => x.Id, src => src.MapFrom(s => s._id.ToString()));
-            CreateMap<Create.Command, Extract>()
-                .ForMember(x => x.BranchOffice, src => src.MapFrom(s => new BranchOffice(s.BranchOfficeName)))
-                .ForMember(x => x.Bank, src => src.MapFrom(s => new Bank(s.BankName)));
+            CreateMap<Create.Command, Extract>();
             CreateMap<Update.Command, Extract>()
-                .ForMember(x=> x._id, src => src.MapFrom(s=> ObjectId.Parse(s.Id)))
-                .ForMember(x => x.BranchOffice, src => src.MapFrom(s => new BranchOffice(s.BranchOfficeName)))
-                .ForMember(x => x.Bank, src => src.MapFrom(s => new Bank(s.BankName)));
+                .ForMember(x => x._id, src => src.MapFrom(s => ObjectId.Parse(s.Id)));
         }
     }
 }
