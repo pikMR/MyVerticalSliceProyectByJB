@@ -95,7 +95,7 @@ namespace ServiMotor.IntegrationTests
 
         public class BankContainer
         {
-            public GetAll.Result.Bank[] Banks { get; set; }
+            public GetAll.Result.BankDto[] Banks { get; set; }
         }
 
         private async Task  CreateFiveBanks()
