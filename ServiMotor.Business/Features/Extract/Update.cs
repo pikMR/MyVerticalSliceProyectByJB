@@ -21,11 +21,11 @@ namespace ServiMotor.Features.Extracts
         {
             public string Id { get; set; }
             public string Description { get; set; }
-            public string BankName { get; set; }
+            public Banks.Create.Command Bank { get; set; }
             public DateTime Date { get; set; }
             public decimal Balance { get; set; }
             public string Detail { get; set; }
-            public string BranchOfficeName { get; set; }
+            public BranchOffices.Create.Command BranchOffice { get; set; }
 
             public Command()
             {
@@ -44,11 +44,13 @@ namespace ServiMotor.Features.Extracts
         {
             private readonly IBaseRepository<Extract> _repositoryExtract;
             private readonly IMapper _mapper;
+            private readonly IMediator _mediator;
 
-            public CommandHandler(IBaseRepository<Extract> repository, IMapper mapper)
+            public CommandHandler(IBaseRepository<Extract> repository, IMapper mapper, IMediator mediator)
             {
                 _repositoryExtract = repository;
                 _mapper = mapper;
+                _mediator = mediator;
             }
 
             public async Task<string> Handle(Command request, CancellationToken cancellationToken)
@@ -56,7 +58,11 @@ namespace ServiMotor.Features.Extracts
                 Extract extract = null;
                 if (request.Id != null)
                 {
+                    var bank = await _mediator.Send(request.Bank, cancellationToken);
+                    var branchOffice = await _mediator.Send(request.BranchOffice, cancellationToken);
                     extract = _mapper.Map<Extract>(request);
+                    extract.BranchOffice = branchOffice;
+                    extract.Bank = bank;
                     await _repositoryExtract.UpdateAsync(extract);
                 }
 
