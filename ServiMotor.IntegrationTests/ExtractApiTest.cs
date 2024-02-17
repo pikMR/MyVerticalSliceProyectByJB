@@ -23,24 +23,29 @@ namespace ServiMotor.IntegrationTests
 {
     public class ExtractApiTest
     {
-        private IBaseRepository<Business.Models.Extract> _repository;
-        private Faker<Business.Models.Extract> fakerExtract;
+        private IBaseRepository<Extract> _extractRepository;
+        private IBaseRepository<Bank> _bankRepository;
+        private IBaseRepository<BranchOffice> _branchRepository;
+        private Faker<Extract> fakerExtract;
         private ExtractController controller;
         private HttpClient _client;
-
 
         [SetUp]
         public void Setup()
         {
             DbFixture DbFix = new();
             DbFix.Dispose();
-            _repository = new BaseRepository<Business.Models.Extract>(new MongoBookDBContext(DbFix.DbContextSettings));
+            _extractRepository = new BaseRepository<Extract>(new MongoBookDBContext(DbFix.DbContextSettings));
+            _bankRepository = new BaseRepository<Bank>(new MongoBookDBContext(DbFix.DbContextSettings));
+            _branchRepository = new BaseRepository<BranchOffice>(new MongoBookDBContext(DbFix.DbContextSettings));
             fakerExtract = HelperBogus.GetFakerExtract();
             var factory = new WebApplicationFactory<Startup>();
             _client = factory.CreateClient();
 
-            // create elements for api
-            _repository.DeleteAll();
+            // delete all elements
+            _bankRepository.DeleteAll();
+            _branchRepository.DeleteAll();
+            _extractRepository.DeleteAll();
         }
 
         [TearDown]
@@ -71,14 +76,28 @@ namespace ServiMotor.IntegrationTests
         [Test]
         public async Task It_should_create_one_extract()
         {
+            var bank = HelperBogus.GetFakerBank().Generate(1).First();
+            var branchOffice = HelperBogus.GetFakerBranchOffice().Generate(1).First();
+
+            await _bankRepository.Create(bank);
+            await _branchRepository.Create(branchOffice);
+
             var newExtract = new Create.Command
             {
                 Description = "Test Description",
-                BankName = "Test Bank",
                 Date = DateTime.Now,
                 Balance = 100.50m,
                 Detail = "Test Detail",
-                BranchOfficeName = "Test Branch Office"
+                Bank = new Features.Banks.Create.Command()
+                {
+                    Id = bank._id.ToString(),
+                    Name = bank.Name,
+                },
+                BranchOffice = new Features.BranchOffices.Create.Command()
+                {
+                    Id = branchOffice._id.ToString(),
+                    Name = branchOffice.Name,
+                },
             };
 
             var jsonContent = new StringContent(JsonSerializer.Serialize(newExtract), Encoding.UTF8, "application/json");
@@ -86,7 +105,7 @@ namespace ServiMotor.IntegrationTests
             // Act
             var response = await _client.PostAsync("/Extract", jsonContent);
             var idResponse = await response.Content.ReadAsStringAsync();
-            var getExtract = await _repository.GetFirstAsync();
+            var getExtract = await _extractRepository.GetFirstAsync();
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
@@ -94,27 +113,44 @@ namespace ServiMotor.IntegrationTests
             Assert.NotNull(idResponse);
             Assert.NotNull(getExtract);
             Assert.AreEqual("Test Description", getExtract.Description);
-            Assert.AreEqual("Test Bank", getExtract.Bank.Name);
             Assert.AreEqual(100.50m, getExtract.Balance);
             Assert.AreEqual("Test Detail", getExtract.Detail);
-            Assert.AreEqual("Test Branch Office", getExtract.BranchOffice.Name);
+            Assert.AreEqual(bank.Name, getExtract.Bank.Name);
+            Assert.AreEqual(bank._id.ToString(), getExtract.Bank._id.ToString());
+            Assert.AreEqual(branchOffice.Name, getExtract.BranchOffice.Name);
+            Assert.AreEqual(branchOffice._id.ToString(), getExtract.BranchOffice._id.ToString());
         }
 
         [Test]
-        public async Task It_should_update_one_extract()
+        public async Task It_should_update_one_extract_with_new_bank_and_branch()
         {
+            // create bank and branch to update
+            var bank = HelperBogus.GetFakerBank().Generate(1).First();
+            var branchOffice = HelperBogus.GetFakerBranchOffice().Generate(1).First();
+            await _branchRepository.Create(branchOffice);
+            await _bankRepository.Create(bank);
+
+            // create new extract with random bank and branch
             var exampleExtract = fakerExtract.Generate(1).First();
-            await _repository.Create(exampleExtract);
+            await _extractRepository.Create(exampleExtract);
 
             var updatedExtract = new Update.Command
             {
                 Id = exampleExtract._id.ToString(),
                 Description = "Test Description 2",
-                BankName = "Test Bank 2",
                 Date = DateTime.Now,
                 Balance = 101.50m,
                 Detail = "Test Detail 2",
-                BranchOfficeName = "Test Branch Office 2"
+                Bank = new Features.Banks.Create.Command()
+                {
+                    Id = bank._id.ToString(),
+                    Name = "this name dont should updated",
+                },
+                BranchOffice = new Features.BranchOffices.Create.Command()
+                {
+                    Id = branchOffice._id.ToString(),
+                    Name = "this name dont should updated",
+                },
             };
 
             var jsonContent = new StringContent(JsonSerializer.Serialize(updatedExtract), Encoding.UTF8, "application/json");
@@ -122,23 +158,68 @@ namespace ServiMotor.IntegrationTests
             // Act
             var response = await _client.PutAsync("/Extract", jsonContent);
             var idResponse = await response.Content.ReadAsStringAsync();
-            var getExtract = await _repository.GetFirstAsync();
+            var getExtract = await _extractRepository.GetFirstAsync();
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(idResponse);
             Assert.NotNull(getExtract);
             Assert.AreEqual("Test Description 2", getExtract.Description);
-            Assert.AreEqual("Test Bank 2", getExtract.Bank.Name);
             Assert.AreEqual(101.50m, getExtract.Balance);
             Assert.AreEqual("Test Detail 2", getExtract.Detail);
-            Assert.AreEqual("Test Branch Office 2", getExtract.BranchOffice.Name);
+            Assert.AreEqual(bank.Name, getExtract.Bank.Name);
+            Assert.AreEqual(bank._id, getExtract.Bank._id);
+            Assert.AreEqual(branchOffice.Name, getExtract.BranchOffice.Name);
+            Assert.AreEqual(branchOffice._id, getExtract.BranchOffice._id);
+        }
+
+        public async Task It_should_update_one_extract_and_bank_and_branchOffice()
+        {
+            var bank = HelperBogus.GetFakerBank().Generate(1).First();
+            var branchOffice = HelperBogus.GetFakerBranchOffice().Generate(1).First();
+            var exampleExtract = fakerExtract.Generate(1).First();
+            await _extractRepository.Create(exampleExtract);
+
+            var updatedExtract = new Update.Command
+            {
+                Id = exampleExtract._id.ToString(),
+                Description = "Test Description 2",
+                Date = DateTime.Now,
+                Balance = 101.50m,
+                Detail = "Test Detail 2",
+                Bank = new Features.Banks.Create.Command()
+                {
+                    Name = bank.Name,
+                },
+                BranchOffice = new Features.BranchOffices.Create.Command()
+                {
+                    Name = branchOffice.Name,
+                },
+            };
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(updatedExtract), Encoding.UTF8, "application/json");
+
+            // Act
+            var response = await _client.PutAsync("/Extract", jsonContent);
+            var idResponse = await response.Content.ReadAsStringAsync();
+            var getExtract = await _extractRepository.GetFirstAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(getExtract);
+            Assert.AreEqual("Test Description 2", getExtract.Description);
+            Assert.AreEqual(101.50m, getExtract.Balance);
+            Assert.AreEqual("Test Detail 2", getExtract.Detail);
+            Assert.AreEqual(bank.Name, getExtract.Bank.Name);
+            Assert.NotNull(getExtract.Bank._id);
+            Assert.AreEqual(branchOffice.Name, getExtract.BranchOffice.Name);
+            Assert.NotNull(getExtract.BranchOffice._id);
         }
 
         public class ExtractContainer
         {
-            public GetAll.Result.Extract[] Extracts { get; set; }
+            public ExtractDto[] Extracts { get; set; }
         }
 
         private async Task  CreateFiveExtracts()
@@ -146,7 +227,7 @@ namespace ServiMotor.IntegrationTests
             var exampleExtracts = fakerExtract.Generate(5);
             foreach (var extract in exampleExtracts)
             {
-                await _repository.Create(extract);
+                await _extractRepository.Create(extract);
             }
         }
     }
