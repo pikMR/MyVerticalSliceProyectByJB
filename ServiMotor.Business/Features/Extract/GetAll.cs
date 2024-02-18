@@ -5,8 +5,11 @@ using ServiMotor.Features.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static ServiMotor.Features.Banks.GetAll.Result;
+using static ServiMotor.Features.BranchOffices.GetAll.Result;
 
 namespace ServiMotor.Features.Extracts
 {
@@ -22,6 +25,7 @@ namespace ServiMotor.Features.Extracts
 
         public record Query : IRequest<Result>
         {
+            public Expression<Func<Extract,bool>> Filter { get; set; }
         }
 
         public record Result
@@ -32,11 +36,11 @@ namespace ServiMotor.Features.Extracts
             {
                 public string Id { get; set; }
                 public string Description { get; set; }
-                public string BankName { get; set; }
+                public BankDto Bank { get; set; }
                 public DateTime Date { get; set; }
                 public decimal Balance { get; set; }
                 public string Detail { get; set; }
-                public string BranchOfficeName { get; set; }
+                public BranchOfficeDto BranchOffice { get; set; }
             }
         }
 
@@ -53,8 +57,17 @@ namespace ServiMotor.Features.Extracts
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var extracts = await _repository.Get();
+                IEnumerable<Extract> extracts;
 
+                if(request.Filter != null)
+                {
+                    extracts = await _repository.FindAsync(request.Filter, cancellationToken);
+                }
+                else
+                {
+                    extracts = await _repository.Get();
+                }
+                
                 return new Result
                 {
                     Extracts = _mapper.Map<IEnumerable<Result.ExtractDto>>(extracts)

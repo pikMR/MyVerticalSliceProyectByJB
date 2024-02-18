@@ -45,20 +45,22 @@ namespace ServiMotor.Infraestructure
 
         public async Task<TEntity> Get(string id)
         {
-            //ex. 5dc1039a1521eaa36835e541
-
             var objectId = new ObjectId(id);
-
             FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", objectId);
-
             return await _dbCollection.FindAsync(filter).Result.FirstOrDefaultAsync();
 
         }
         public async Task<IEnumerable<TEntity>> Get()
         {
-            //var other = await _dbCollection.Find(FilterDefinition<TEntity>.Empty).FirstOrDefaultAsync();
             var all = await _dbCollection.FindAsync(Builders<TEntity>.Filter.Empty);
             return await all.ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<TEntity>> FindAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        CancellationToken cancellationToken = default)
+        {
+            return await _dbCollection.Find(predicate).ToListAsync(cancellationToken: cancellationToken)!;
         }
 
         public async Task<TEntity> GetFirstAsync()

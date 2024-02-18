@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServiMotor.Features.Interfaces
@@ -17,5 +18,6 @@ namespace ServiMotor.Features.Interfaces
         Task<TEntity> GetFirstAsync();
         Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter);
         Task<TEntity> UpdateAsync(TEntity obj);
+        Task<IReadOnlyList<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
     }
 }

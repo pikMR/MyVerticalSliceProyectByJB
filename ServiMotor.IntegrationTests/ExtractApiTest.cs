@@ -55,6 +55,51 @@ namespace ServiMotor.IntegrationTests
             _client.Dispose();
         }
 
+        [Test]
+        public async Task It_should_get_two_extracts_filter_by_bank_and_branchoffice()
+        {
+            var bank = HelperBogus.GetFakerBank().Generate(1).First();
+            var branchOffice = HelperBogus.GetFakerBranchOffice().Generate(1).First();
+            await _bankRepository.Create(bank);
+            await _branchRepository.Create(branchOffice);
+            await this.CreateTwoExtractsWithBankAndBranchOffice(bank, branchOffice);
+            await this.CreateFiveExtractsWithBank(bank);
+            await this.CreateFiveExtracts();
+
+            var response = await _client.GetAsync($"Extract/Bank/{bank._id}/BranchOffice/{branchOffice._id}");
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            var json = await response.Content.ReadAsStringAsync();
+            var extractsObjects = JsonSerializer.Deserialize<ExtractContainer>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Esto permite que las propiedades coincidan incluso si tienen diferentes casos.
+            });
+
+            Assert.AreEqual(2, extractsObjects.Extracts.Count());
+            Assert.True(extractsObjects.Extracts.All(x => x.Id != null));
+        }
+
+        [Test]
+        public async Task It_should_get_five_extracts_filter_by_bank()
+        {
+            var bank = HelperBogus.GetFakerBank().Generate(1).First();
+            await _bankRepository.Create(bank);
+            await this.CreateFiveExtractsWithBank(bank);
+            await this.CreateFiveExtracts();
+
+            var response = await _client.GetAsync($"Extract/Bank/{bank._id}");
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            var json = await response.Content.ReadAsStringAsync();
+            var extractsObjects = JsonSerializer.Deserialize<ExtractContainer>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Esto permite que las propiedades coincidan incluso si tienen diferentes casos.
+            });
+
+            Assert.AreEqual(5, extractsObjects.Extracts.Count());
+            Assert.True(extractsObjects.Extracts.All(x => x.Id != null));
+        }
+
 
         [Test]
         public async Task It_should_get_five_extracts()
@@ -227,6 +272,27 @@ namespace ServiMotor.IntegrationTests
             var exampleExtracts = fakerExtract.Generate(5);
             foreach (var extract in exampleExtracts)
             {
+                await _extractRepository.Create(extract);
+            }
+        }
+
+        private async Task CreateFiveExtractsWithBank(Bank bank)
+        {
+            var exampleExtracts = fakerExtract.Generate(5);
+            foreach (var extract in exampleExtracts)
+            {
+                extract.Bank = bank;
+                await _extractRepository.Create(extract);
+            }
+        }
+
+        private async Task CreateTwoExtractsWithBankAndBranchOffice(Bank bank, BranchOffice branchOffice)
+        {
+            var exampleExtracts = fakerExtract.Generate(2);
+            foreach (var extract in exampleExtracts)
+            {
+                extract.Bank = bank;
+                extract.BranchOffice = branchOffice;
                 await _extractRepository.Create(extract);
             }
         }
