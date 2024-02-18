@@ -1,20 +1,14 @@
 using Microsoft.AspNetCore.Builder;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using FluentValidation;
 using MediatR;
-using ServiMotor.Features.Extracts;
 using ServiMotor.Infraestructure;
 using System;
 using ServiMotor.Features.Interfaces;
-using ServiMotor.Business.Models;
 
 namespace ServiMotor
 {
@@ -33,7 +27,6 @@ namespace ServiMotor
             var domainAssembly = AppDomain.CurrentDomain.GetAssemblies();
             services.AddMediatR(domainAssembly);
             services.AddAutoMapper(domainAssembly);
-            // services.AddAutoMapper(typeof(MappingProfile));
             services.Configure<Mongosettings>(Configuration.GetSection("Mongosettings"));
             services.AddControllers();
             services.AddSingleton<IMongoBookDBContext, MongoBookDBContext>();

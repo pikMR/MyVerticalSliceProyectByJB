@@ -1,17 +1,10 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
-using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Interfaces;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace ServiMotor.Features.BranchOffices
 {

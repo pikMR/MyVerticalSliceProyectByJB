@@ -1,24 +1,16 @@
 ﻿using Bogus;
 using Microsoft.AspNetCore.Mvc.Testing;
-using MongoDB.Bson;
 using NUnit.Framework;
-using ServiMotor.Business.Models;
-using ServiMotor.Controllers;
 using ServiMotor.Features.Banks;
 using ServiMotor.Features.Interfaces;
 using ServiMotor.Infraestructure;
 using ServiMotorAPI.Controllers;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static ServiMotor.Features.Banks.GetAll.Result;
 
 namespace ServiMotor.IntegrationTests
 {

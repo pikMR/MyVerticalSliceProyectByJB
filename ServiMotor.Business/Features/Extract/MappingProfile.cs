@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MongoDB.Bson;
 using ServiMotor.Business.Models;
-using static ServiMotor.Features.Extracts.Create;
 using static ServiMotor.Features.Extracts.GetAll;
 
 namespace ServiMotor.Features.Extracts

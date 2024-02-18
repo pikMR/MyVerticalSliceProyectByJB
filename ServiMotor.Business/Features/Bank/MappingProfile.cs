@@ -1,12 +1,6 @@
 ﻿using AutoMapper;
 using MongoDB.Bson;
 using ServiMotor.Business.Models;
-using ServiMotor.Features.Extracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static ServiMotor.Features.Banks.GetAll;
 
 namespace ServiMotor.Features.Banks

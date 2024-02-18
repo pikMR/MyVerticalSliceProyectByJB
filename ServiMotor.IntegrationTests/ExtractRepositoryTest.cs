@@ -3,10 +3,8 @@ using System.Linq;
 using ServiMotor.Business.Models;
 using ServiMotor.Infraestructure;
 using System.Threading.Tasks;
-using ServiMotor.Features.Extracts;
 using ServiMotor.Features.Interfaces;
 using Bogus;
-using static Bogus.DataSets.Name;
 
 namespace ServiMotor.IntegrationTests
 {

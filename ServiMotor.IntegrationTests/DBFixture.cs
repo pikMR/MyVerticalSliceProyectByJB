@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using ServiMotor.Infraestructure;
 using System;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
