@@ -31,6 +31,7 @@ namespace ServiMotor
             services.AddControllers();
             services.AddSingleton<IMongoBookDBContext, MongoBookDBContext>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.CustomSchemaIds(i => i.FullName);
@@ -50,6 +51,11 @@ namespace ServiMotor
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors(x => x
+             .AllowAnyMethod()
+             .AllowAnyHeader()
+             .SetIsOriginAllowed(origin => true) // allow any origin
+             .AllowCredentials()); // allow credentials
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
