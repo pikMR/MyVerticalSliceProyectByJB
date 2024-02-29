@@ -12,7 +12,7 @@ namespace ServiMotor.Features.Extracts
             CreateMap<Extract, Create.Command>();
             CreateMap<Extract, Result.ExtractDto>()
                 .ForMember(x => x.Id, src => src.MapFrom(s => s._id.ToString()))
-                .ForMember(x => x.Date, src => src.MapFrom(s => s.Date.ToShortDateString()))
+                .ForMember(x => x.Date, src => src.MapFrom(s => s.Date.ToString("yyyy-MM-dd")))
                 ;
             CreateMap<Create.Command, Extract>();
             CreateMap<Update.Command, Extract>()
