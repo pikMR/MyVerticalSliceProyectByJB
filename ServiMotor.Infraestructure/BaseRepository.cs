@@ -20,7 +20,7 @@ namespace ServiMotor.Infraestructure
             _dbCollection = _mongoContext.GetCollection<TEntity>(typeof(TEntity).Name);
         }
 
-        public async Task Create(TEntity obj)
+        public async Task CreateAsync(TEntity obj)
         {
             if (obj == null)
             {
@@ -29,11 +29,10 @@ namespace ServiMotor.Infraestructure
             await _dbCollection.InsertOneAsync(obj);
         }
 
-        public void Delete(string id)
+        public async Task DeleteAsync(string id)
         {
             var objectId = new ObjectId(id);
-            _dbCollection.DeleteOneAsync(Builders<TEntity>.Filter.Eq("_id", objectId));
-
+            await _dbCollection.DeleteOneAsync(Builders<TEntity>.Filter.Eq("_id", objectId));
         }
 
         public void DeleteAll()
@@ -41,14 +40,14 @@ namespace ServiMotor.Infraestructure
             _dbCollection.DeleteManyAsync(Builders<TEntity>.Filter.Empty);
         }
 
-        public async Task<TEntity> Get(string id)
+        public async Task<TEntity> GetAsync(string id)
         {
             var objectId = new ObjectId(id);
             FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", objectId);
             return await _dbCollection.FindAsync(filter).Result.FirstOrDefaultAsync();
 
         }
-        public async Task<IEnumerable<TEntity>> Get()
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             var all = await _dbCollection.FindAsync(Builders<TEntity>.Filter.Empty);
             return await all.ToListAsync();
@@ -68,14 +67,14 @@ namespace ServiMotor.Infraestructure
 
         public async Task<TEntity> UpdateAsync(TEntity obj)
         {
-            var id = obj.GetType().GetProperty("_id").GetValue(obj,null);
+            var id = obj.GetType().GetProperty("_id").GetValue(obj, null);
             await _dbCollection.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", id), obj);
             return obj;
         }
 
         public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter)
         {
-                return await _dbCollection.Find(filter).FirstOrDefaultAsync();
+            return await _dbCollection.Find(filter).FirstOrDefaultAsync();
         }
     }
 }

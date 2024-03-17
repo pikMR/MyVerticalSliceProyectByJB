@@ -8,14 +8,14 @@ namespace ServiMotor.Features.Interfaces
 {
     public interface IBaseRepository<TEntity> where TEntity : class
     {
-        Task Create(TEntity obj);
-        void Delete(string id);
-        Task<TEntity> Get(string id);
-        Task<IEnumerable<TEntity>> Get();
+        Task CreateAsync(TEntity obj);
+        Task<TEntity> GetAsync(string id);
+        Task<IEnumerable<TEntity>> GetAllAsync();
         void DeleteAll();
         Task<TEntity> GetFirstAsync();
         Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> filter);
         Task<TEntity> UpdateAsync(TEntity obj);
         Task<IReadOnlyList<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
+        Task DeleteAsync(string id);
     }
 }

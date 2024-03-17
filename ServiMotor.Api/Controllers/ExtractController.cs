@@ -44,7 +44,7 @@ namespace ServiMotor.Controllers
             ObjectId.TryParse(idBranchOffice, out ObjectId filterParamIdBranchOffice);
             var query = new GetAll.Query()
             {
-                Filter = (x) => 
+                Filter = (x) =>
                     x.Bank._id == filterParamIdBank &&
                     x.BranchOffice._id == filterParamIdBranchOffice
             };
@@ -54,15 +54,27 @@ namespace ServiMotor.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Create.Command commanda)
+        public async Task<IActionResult> Create(Create.Command command)
         {
-            var result = await _mediator.Send(commanda);
-            return Created("/Extract",result);
+            var result = await _mediator.Send(command);
+            return Created("/Extract", result);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(Update.Command command)
         {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpDelete("{idExtract}")]
+        public async Task<IActionResult> Delete(string idExtract)
+        {
+            var command = new Delete.Command()
+            {
+                Id = idExtract
+            };
+
             var result = await _mediator.Send(command);
             return Ok(result);
         }
