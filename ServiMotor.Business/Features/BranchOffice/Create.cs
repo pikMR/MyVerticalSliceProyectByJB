@@ -52,7 +52,7 @@ namespace ServiMotor.Features.BranchOffices
                     if (branchOffice == null)
                     {
                         branchOffice = _mapper.Map<BranchOffice>(request);
-                        await _repository.Create(branchOffice);
+                        await _repository.CreateAsync(branchOffice);
                     }
 
                     return branchOffice;

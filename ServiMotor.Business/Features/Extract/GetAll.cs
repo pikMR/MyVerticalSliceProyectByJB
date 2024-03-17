@@ -24,7 +24,7 @@ namespace ServiMotor.Features.Extracts
 
         public record Query : IRequest<Result>
         {
-            public Expression<Func<Extract,bool>> Filter { get; set; }
+            public Expression<Func<Extract, bool>> Filter { get; set; }
         }
 
         public record Result
@@ -58,15 +58,15 @@ namespace ServiMotor.Features.Extracts
             {
                 IEnumerable<Extract> extracts;
 
-                if(request.Filter != null)
+                if (request.Filter != null)
                 {
                     extracts = await _repository.FindAsync(request.Filter, cancellationToken);
                 }
                 else
                 {
-                    extracts = await _repository.Get();
+                    extracts = await _repository.GetAllAsync();
                 }
-                
+
                 return new Result
                 {
                     Extracts = _mapper.Map<IEnumerable<Result.ExtractDto>>(extracts)

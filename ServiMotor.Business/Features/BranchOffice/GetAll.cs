@@ -46,7 +46,7 @@ namespace ServiMotor.Features.BranchOffices
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var branchOffices = await _repository.Get();
+                var branchOffices = await _repository.GetAllAsync();
 
                 return new Result
                 {

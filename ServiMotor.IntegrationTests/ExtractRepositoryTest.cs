@@ -30,10 +30,10 @@ namespace ServiMotor.IntegrationTests
 
             foreach (var extract in extracts)
             {
-                await _repository.Create(extract);
+                await _repository.CreateAsync(extract);
             }
             
-            var data = await _repository.Get();
+            var data = await _repository.GetAllAsync();
             Assert.GreaterOrEqual(data.Count(), 10);
             Assert.Pass("Se han creado y obtenido datos de MongoDB");
         }
@@ -49,7 +49,7 @@ namespace ServiMotor.IntegrationTests
             firstElement.Bank = newElement.Bank;
             firstElement.Description = newElement.Description;
             await _repository.UpdateAsync(firstElement);
-            var updatedElement = await _repository.Get(idFirstElement);
+            var updatedElement = await _repository.GetAsync(idFirstElement);
 
             // elements that change
             Assert.AreEqual(newElement.Description, updatedElement.Description);

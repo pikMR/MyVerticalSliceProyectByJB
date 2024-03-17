@@ -56,8 +56,8 @@ namespace ServiMotor.IntegrationTests
         {
             var bank = HelperBogus.GetFakerBank().Generate(1).First();
             var branchOffice = HelperBogus.GetFakerBranchOffice().Generate(1).First();
-            await _bankRepository.Create(bank);
-            await _branchRepository.Create(branchOffice);
+            await _bankRepository.CreateAsync(bank);
+            await _branchRepository.CreateAsync(branchOffice);
             await this.CreateTwoExtractsWithBankAndBranchOffice(bank, branchOffice);
             await this.CreateFiveExtractsWithBank(bank);
             await this.CreateFiveExtracts();
@@ -79,7 +79,7 @@ namespace ServiMotor.IntegrationTests
         public async Task It_should_get_five_extracts_filter_by_bank()
         {
             var bank = HelperBogus.GetFakerBank().Generate(1).First();
-            await _bankRepository.Create(bank);
+            await _bankRepository.CreateAsync(bank);
             await this.CreateFiveExtractsWithBank(bank);
             await this.CreateFiveExtracts();
 
@@ -120,8 +120,8 @@ namespace ServiMotor.IntegrationTests
             var bank = HelperBogus.GetFakerBank().Generate(1).First();
             var branchOffice = HelperBogus.GetFakerBranchOffice().Generate(1).First();
 
-            await _bankRepository.Create(bank);
-            await _branchRepository.Create(branchOffice);
+            await _bankRepository.CreateAsync(bank);
+            await _branchRepository.CreateAsync(branchOffice);
 
             var newExtract = new Create.Command
             {
@@ -168,12 +168,12 @@ namespace ServiMotor.IntegrationTests
             // create bank and branch to update
             var bank = HelperBogus.GetFakerBank().Generate(1).First();
             var branchOffice = HelperBogus.GetFakerBranchOffice().Generate(1).First();
-            await _branchRepository.Create(branchOffice);
-            await _bankRepository.Create(bank);
+            await _branchRepository.CreateAsync(branchOffice);
+            await _bankRepository.CreateAsync(bank);
 
             // create new extract with random bank and branch
             var exampleExtract = fakerExtract.Generate(1).First();
-            await _extractRepository.Create(exampleExtract);
+            await _extractRepository.CreateAsync(exampleExtract);
 
             var updatedExtract = new Update.Command
             {
@@ -219,7 +219,7 @@ namespace ServiMotor.IntegrationTests
             var bank = HelperBogus.GetFakerBank().Generate(1).First();
             var branchOffice = HelperBogus.GetFakerBranchOffice().Generate(1).First();
             var exampleExtract = fakerExtract.Generate(1).First();
-            await _extractRepository.Create(exampleExtract);
+            await _extractRepository.CreateAsync(exampleExtract);
 
             var updatedExtract = new Update.Command
             {
@@ -263,12 +263,12 @@ namespace ServiMotor.IntegrationTests
             public ExtractDto[] Extracts { get; set; }
         }
 
-        private async Task  CreateFiveExtracts()
+        private async Task CreateFiveExtracts()
         {
             var exampleExtracts = fakerExtract.Generate(5);
             foreach (var extract in exampleExtracts)
             {
-                await _extractRepository.Create(extract);
+                await _extractRepository.CreateAsync(extract);
             }
         }
 
@@ -278,7 +278,7 @@ namespace ServiMotor.IntegrationTests
             foreach (var extract in exampleExtracts)
             {
                 extract.Bank = bank;
-                await _extractRepository.Create(extract);
+                await _extractRepository.CreateAsync(extract);
             }
         }
 
@@ -289,7 +289,7 @@ namespace ServiMotor.IntegrationTests
             {
                 extract.Bank = bank;
                 extract.BranchOffice = branchOffice;
-                await _extractRepository.Create(extract);
+                await _extractRepository.CreateAsync(extract);
             }
         }
     }

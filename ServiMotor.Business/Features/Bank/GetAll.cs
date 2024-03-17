@@ -46,7 +46,7 @@ namespace ServiMotor.Features.Banks
 
             public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
             {
-                var banks = await _repository.Get();
+                var banks = await _repository.GetAllAsync();
 
                 return new Result
                 {

@@ -30,10 +30,10 @@ namespace ServiMotor.IntegrationTests
 
             foreach (var branchOffice in branchOffices)
             {
-                await _repository.Create(branchOffice);
+                await _repository.CreateAsync(branchOffice);
             }
             
-            var data = await _repository.Get();
+            var data = await _repository.GetAllAsync();
             Assert.GreaterOrEqual(data.Count(), 10);
             Assert.Pass("Se han creado y obtenido datos de MongoDB");
         }
@@ -45,7 +45,7 @@ namespace ServiMotor.IntegrationTests
             var firstElement = await _repository.GetFirstAsync();
             firstElement.Name = newElement.Name + "_updated";
             await _repository.UpdateAsync(firstElement);
-            var updatedElement = await _repository.Get(firstElement._id.ToString());
+            var updatedElement = await _repository.GetAsync(firstElement._id.ToString());
 
             // elements that change
             Assert.AreEqual(firstElement.Name, updatedElement.Name);

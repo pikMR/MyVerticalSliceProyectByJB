@@ -46,13 +46,13 @@ namespace ServiMotor.Features.Banks
                 var idBank = request.Id;
                 Bank bank;
 
-                if(idBank == null)
+                if (idBank == null)
                 {
                     bank = await _repository.GetFirstAsync(x => x.Name.Equals(request.Name.Trim()));
-                    if(bank == null)
+                    if (bank == null)
                     {
                         bank = _mapper.Map<Bank>(request);
-                        await _repository.Create(bank);
+                        await _repository.CreateAsync(bank);
                     }
 
                     return bank;
@@ -61,8 +61,8 @@ namespace ServiMotor.Features.Banks
                 {
                     var id = ObjectId.Parse(idBank);
                     bank = await _repository.GetFirstAsync(x => x._id.Equals(id));
-                    
-                    if(bank == null)
+
+                    if (bank == null)
                     {
                         throw new ArgumentException($"Bank with id {id} not exist");
                     }

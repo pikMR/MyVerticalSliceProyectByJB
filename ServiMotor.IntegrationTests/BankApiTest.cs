@@ -95,7 +95,7 @@ namespace ServiMotor.IntegrationTests
             var exampleBanks = fakerBank.Generate(5);
             foreach (var bank in exampleBanks)
             {
-                await _repository.Create(bank);
+                await _repository.CreateAsync(bank);
             }
         }
     }
