@@ -1,11 +1,11 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace ServiMotor.Business.Models
 {
-    public class Extract : RootEntity
+    public class Extract : AggregateRoot
     {
         public Extract()
         {
@@ -34,5 +34,7 @@ namespace ServiMotor.Business.Models
 
         [Display(Name = "Banco")]
         public Bank Bank { get; set; }
+
+        internal void UpdateResult(IDomainEvent extractCreateDomainEvent) => RaiseDomainEvent(extractCreateDomainEvent);
     }
 }

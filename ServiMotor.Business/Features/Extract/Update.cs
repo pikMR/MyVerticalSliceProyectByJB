@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
+using ServiMotor.Business.Features.DomainEvents;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Interfaces;
 using System;
@@ -58,6 +59,7 @@ namespace ServiMotor.Features.Extracts
                     extract.BranchOffice = branchOffice;
                     extract.Bank = bank;
                     await _repositoryExtract.UpdateAsync(extract);
+                    extract.UpdateResult(new ExtractUpdateDomainEvent(extract._id, extract.Balance));
                 }
 
                 return extract._id.ToString();

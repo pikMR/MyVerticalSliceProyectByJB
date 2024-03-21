@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
+using ServiMotor.Business.Features.DomainEvents;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Interfaces;
 using System;
@@ -52,13 +53,13 @@ namespace ServiMotor.Features.Extracts
 
             public async Task<string> Handle(Command request, CancellationToken cancellationToken)
             {
-                Extract extract;
                 var bank = await _mediator.Send(request.Bank, cancellationToken);
                 var branchOffice = await _mediator.Send(request.BranchOffice, cancellationToken);
-                extract = _mapper.Map<Extract>(request);
+                var extract = _mapper.Map<Extract>(request);
                 extract.BranchOffice = branchOffice;
                 extract.Bank = bank;
                 await _repositoryExtract.CreateAsync(extract);
+                extract.UpdateResult(new ExtractCreateDomainEvent(extract._id, extract.Balance));
                 return extract._id.ToString();
             }
         }

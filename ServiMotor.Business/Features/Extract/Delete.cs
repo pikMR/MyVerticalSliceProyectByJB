@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using ServiMotor.Business.Features.DomainEvents;
 using ServiMotor.Business.Models;
 using ServiMotor.Features.Interfaces;
 using System.Threading;
@@ -39,6 +40,8 @@ namespace ServiMotor.Features.Extracts
             {
                 if (request.Id != null)
                 {
+                    var extract = await _repositoryExtract.GetFirstAsync(x => x._id.ToString() == request.Id);
+                    extract.UpdateResult(new ExtractDeleteDomainEvent(extract._id, extract.Balance));
                     await _repositoryExtract.DeleteAsync(request.Id);
                 }
 
