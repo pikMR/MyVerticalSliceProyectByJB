@@ -3,7 +3,7 @@ using FluentValidation;
 using MediatR;
 using ServiMotor.Business.Features.DomainEvents;
 using ServiMotor.Business.Models;
-using ServiMotor.Features.Interfaces;
+using ServiMotor.Business.Shared;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,7 +59,7 @@ namespace ServiMotor.Features.Extracts
                 extract.BranchOffice = branchOffice;
                 extract.Bank = bank;
                 await _repositoryExtract.CreateAsync(extract);
-                extract.UpdateResult(new ExtractCreateDomainEvent(extract._id, extract.Balance));
+                extract.UpdateCreateResume(new ExtractCreateDomainEvent(extract._id, extract.BranchOffice._id, extract.Bank._id));
                 return extract._id.ToString();
             }
         }

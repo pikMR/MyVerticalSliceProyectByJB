@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 using ServiMotor.Business.Models;
+using ServiMotor.Business.Shared;
 using ServiMotor.Controllers;
 using ServiMotor.Features.Extracts;
-using ServiMotor.Features.Interfaces;
 using ServiMotor.Infraestructure;
 using System;
 using System.Linq;

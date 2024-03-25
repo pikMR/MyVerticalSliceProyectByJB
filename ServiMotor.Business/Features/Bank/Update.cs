@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 using ServiMotor.Business.Models;
-using ServiMotor.Features.Interfaces;
+using ServiMotor.Business.Shared;
 using System.Threading;
 using System.Threading.Tasks;
 

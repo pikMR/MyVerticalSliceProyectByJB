@@ -2,5 +2,5 @@
 
 namespace ServiMotor.Business.Features.DomainEvents;
 
-public sealed record ExtractDeleteDomainEvent(ObjectId Id, decimal Balance) : DomainEvent(Id);
+public sealed record ExtractDeleteDomainEvent(ObjectId Id, ObjectId BranchOfficeId, ObjectId BankId) : DomainEvent(Id);
 

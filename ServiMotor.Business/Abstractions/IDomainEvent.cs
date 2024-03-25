@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using MongoDB.Bson;
 
-namespace ServiMotor.Business.Models
+namespace ServiMotor.Business.Shared
 {
     public interface IDomainEvent : INotification
     {

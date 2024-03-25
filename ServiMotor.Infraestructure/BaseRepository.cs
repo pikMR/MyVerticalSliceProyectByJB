@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
-using ServiMotor.Features.Interfaces;
+using ServiMotor.Business.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -42,10 +42,10 @@ namespace ServiMotor.Infraestructure
 
         public async Task<TEntity> GetAsync(string id)
         {
-            var objectId = new ObjectId(id);
+            var objectId = ObjectId.Parse(id);
             FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", objectId);
-            return await _dbCollection.FindAsync(filter).Result.FirstOrDefaultAsync();
-
+            var response = await _dbCollection.FindAsync(filter);
+            return await response.FirstOrDefaultAsync();
         }
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {

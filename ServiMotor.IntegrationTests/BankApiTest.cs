@@ -1,8 +1,8 @@
 ﻿using Bogus;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
+using ServiMotor.Business.Shared;
 using ServiMotor.Features.Banks;
-using ServiMotor.Features.Interfaces;
 using ServiMotor.Infraestructure;
 using ServiMotorAPI.Controllers;
 using System.Linq;
@@ -90,7 +90,7 @@ namespace ServiMotor.IntegrationTests
             public GetAll.Result.BankDto[] Banks { get; set; }
         }
 
-        private async Task  CreateFiveBanks()
+        private async Task CreateFiveBanks()
         {
             var exampleBanks = fakerBank.Generate(5);
             foreach (var bank in exampleBanks)

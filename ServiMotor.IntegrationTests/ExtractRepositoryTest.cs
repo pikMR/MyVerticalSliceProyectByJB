@@ -3,8 +3,8 @@ using System.Linq;
 using ServiMotor.Business.Models;
 using ServiMotor.Infraestructure;
 using System.Threading.Tasks;
-using ServiMotor.Features.Interfaces;
 using Bogus;
+using ServiMotor.Business.Shared;
 
 namespace ServiMotor.IntegrationTests
 {

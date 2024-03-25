@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using ServiMotor.Infraestructure;
 using System;
-using MongoDB.Driver;
 using System.IO;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ServiMotor.IntegrationTests
 {
@@ -11,7 +11,7 @@ namespace ServiMotor.IntegrationTests
     {
         public DbFixture()
         {
-            IConfiguration config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+            IConfiguration config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Test.json").Build();
             DbContextSettings = new();
             config.GetSection(DbContextSettings.GetType().Name).Bind(DbContextSettings);
         }

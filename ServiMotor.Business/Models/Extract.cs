@@ -1,5 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using ServiMotor.Business.Features.DomainEvents;
+using ServiMotor.Business.Shared;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -35,6 +37,8 @@ namespace ServiMotor.Business.Models
         [Display(Name = "Banco")]
         public Bank Bank { get; set; }
 
-        internal void UpdateResult(IDomainEvent extractCreateDomainEvent) => RaiseDomainEvent(extractCreateDomainEvent);
+        internal void UpdateResume(IDomainEvent extractCreateDomainEvent) => RaiseDomainEvent(extractCreateDomainEvent);
+
+        internal void UpdateCreateResume(ExtractCreateDomainEvent extractCreateDomainEvent) => RaiseDomainEvent(extractCreateDomainEvent);
     }
 }

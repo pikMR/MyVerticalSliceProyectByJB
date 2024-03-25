@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
-using MongoDB.Bson;
 using ServiMotor.Business.Models;
-using ServiMotor.Features.Interfaces;
+using ServiMotor.Business.Shared;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,12 +58,11 @@ namespace ServiMotor.Features.Banks
                 }
                 else
                 {
-                    var id = ObjectId.Parse(idBank);
-                    bank = await _repository.GetFirstAsync(x => x._id.Equals(id));
+                    bank = await _repository.GetAsync(idBank);
 
                     if (bank == null)
                     {
-                        throw new ArgumentException($"Bank with id {id} not exist");
+                        throw new ArgumentException($"Bank with id {request.Id} not exist");
                     }
                 }
 

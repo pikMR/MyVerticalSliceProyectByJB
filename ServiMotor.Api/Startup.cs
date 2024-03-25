@@ -1,14 +1,13 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using MediatR;
+using ServiMotor.Business.Shared;
 using ServiMotor.Infraestructure;
 using System;
-using ServiMotor.Features.Interfaces;
 
 namespace ServiMotor
 {

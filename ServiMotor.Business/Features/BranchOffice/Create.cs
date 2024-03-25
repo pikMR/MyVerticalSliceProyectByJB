@@ -3,7 +3,7 @@ using FluentValidation;
 using MediatR;
 using MongoDB.Bson;
 using ServiMotor.Business.Models;
-using ServiMotor.Features.Interfaces;
+using ServiMotor.Business.Shared;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

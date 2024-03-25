@@ -3,7 +3,7 @@ using FluentValidation;
 using MediatR;
 using ServiMotor.Business.Features.DomainEvents;
 using ServiMotor.Business.Models;
-using ServiMotor.Features.Interfaces;
+using ServiMotor.Business.Shared;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,19 +50,25 @@ namespace ServiMotor.Features.Extracts
 
             public async Task<string> Handle(Command request, CancellationToken cancellationToken)
             {
-                Extract extract = null;
+                Extract newExtract = null;
                 if (request.Id != null)
                 {
+                    var oldExtract = await _repositoryExtract.GetAsync(request.Id);
                     var bank = await _mediator.Send(request.Bank, cancellationToken);
                     var branchOffice = await _mediator.Send(request.BranchOffice, cancellationToken);
-                    extract = _mapper.Map<Extract>(request);
-                    extract.BranchOffice = branchOffice;
-                    extract.Bank = bank;
-                    await _repositoryExtract.UpdateAsync(extract);
-                    extract.UpdateResult(new ExtractUpdateDomainEvent(extract._id, extract.Balance));
+                    newExtract = _mapper.Map<Extract>(request);
+                    newExtract.BranchOffice = branchOffice;
+                    newExtract.Bank = bank;
+
+                    if (!newExtract.BranchOffice._id.Equals(oldExtract.BranchOffice._id))
+                    {
+                        newExtract.UpdateResume(new ExtractUpdateBranchOfficeDomainEvent(newExtract._id, oldExtract.BranchOffice._id, newExtract.BranchOffice._id, newExtract.Bank._id));
+                    }
+
+                    await _repositoryExtract.UpdateAsync(newExtract);
                 }
 
-                return extract._id.ToString();
+                return newExtract._id.ToString();
             }
         }
     }

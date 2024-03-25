@@ -2,7 +2,7 @@
 using MediatR;
 using ServiMotor.Business.Features.DomainEvents;
 using ServiMotor.Business.Models;
-using ServiMotor.Features.Interfaces;
+using ServiMotor.Business.Shared;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,8 +40,8 @@ namespace ServiMotor.Features.Extracts
             {
                 if (request.Id != null)
                 {
-                    var extract = await _repositoryExtract.GetFirstAsync(x => x._id.ToString() == request.Id);
-                    extract.UpdateResult(new ExtractDeleteDomainEvent(extract._id, extract.Balance));
+                    var extract = await _repositoryExtract.GetAsync(request.Id);
+                    extract.UpdateResume(new ExtractDeleteDomainEvent(extract._id, extract.BranchOffice._id, extract.Bank._id));
                     await _repositoryExtract.DeleteAsync(request.Id);
                 }
 
