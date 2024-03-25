@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiMotor.Infraestructure"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiMotor.IntegrationTests", "ServiMotor.IntegrationTests\ServiMotor.IntegrationTests.csproj", "{C46FBA29-569C-4791-9DB9-E3F0E138C497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiMotor.UnitTests", "ServiMotor.BusinessTests\ServiMotor.UnitTests.csproj", "{7F9026E3-D5A8-42E6-8744-222A9A39338A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{C46FBA29-569C-4791-9DB9-E3F0E138C497}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C46FBA29-569C-4791-9DB9-E3F0E138C497}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C46FBA29-569C-4791-9DB9-E3F0E138C497}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F9026E3-D5A8-42E6-8744-222A9A39338A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F9026E3-D5A8-42E6-8744-222A9A39338A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F9026E3-D5A8-42E6-8744-222A9A39338A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F9026E3-D5A8-42E6-8744-222A9A39338A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

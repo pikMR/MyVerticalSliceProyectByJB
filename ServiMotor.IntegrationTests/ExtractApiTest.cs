@@ -1,11 +1,11 @@
 ﻿using Bogus;
-using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 using ServiMotor.Business.Models;
 using ServiMotor.Business.Shared;
 using ServiMotor.Controllers;
 using ServiMotor.Features.Extracts;
 using ServiMotor.Infraestructure;
+using ServiMotor.IntegrationTests.Configuration;
 using System;
 using System.Linq;
 using System.Net;
@@ -35,8 +35,7 @@ namespace ServiMotor.IntegrationTests
             _bankRepository = new BaseRepository<Bank>(new MongoBookDBContext(DbFix.DbContextSettings));
             _branchRepository = new BaseRepository<BranchOffice>(new MongoBookDBContext(DbFix.DbContextSettings));
             fakerExtract = HelperBogus.GetFakerExtract();
-            var factory = new WebApplicationFactory<Startup>();
-            _client = factory.CreateClient();
+            _client = new CustomWebApplicationFactory(DbFix.DbContextSettings).CreateClient();
 
             // delete all elements
             _bankRepository.DeleteAll();

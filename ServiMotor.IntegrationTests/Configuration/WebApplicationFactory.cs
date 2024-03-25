@@ -1,34 +1,30 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using ServiMotor.Infraestructure;
+using System.Collections.Generic;
 
 namespace ServiMotor.IntegrationTests.Configuration
 {
-    public class CustomWebApplicationFactory : WebApplicationFactory<Program>
+    public class CustomWebApplicationFactory : WebApplicationFactory<Startup>
     {
+        private readonly Mongosettings _configuration;
+        public CustomWebApplicationFactory(Mongosettings configuration)
+        {
+            _configuration = configuration;
+        }
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.Test.json")
-                .Build();
-
-            builder.ConfigureTestServices(services =>
-                services.AddOptions<MongoBookDBContext>(configuration.GetSection("Mongosettings").Value)
-            );
-
-            //builder.ConfigureAppConfiguration((host, configurationBuilder) =>
-            //{
-            //    configurationBuilder.AddInMemoryCollection(
-            //        new List<KeyValuePair<string, string?>>
-            //        {
-            //            new KeyValuePair<string, string?>("Mongosettings", "FromTests")
-            //        });
-            //});
-
-            builder.ConfigureAppConfiguration((host, configurationBuilder) => { });
+            builder.ConfigureAppConfiguration((context, configBuilder) =>
+            {
+                configBuilder.AddInMemoryCollection(
+                    new Dictionary<string, string>
+                    {
+                        { $"{nameof(Mongosettings)}:{nameof(_configuration.Connection)}", $"{_configuration.Connection}" },
+                        { $"{nameof(Mongosettings)}:{nameof(_configuration.DatabaseName)}", $"{_configuration.DatabaseName}" }
+                    }
+                );
+            });
         }
     }
 }
