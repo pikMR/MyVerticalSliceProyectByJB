@@ -47,12 +47,12 @@ namespace ServiMotor.IntegrationTests
             var detailFirstElement = firstElement.Detail;
 
             firstElement.Bank = newElement.Bank;
-            firstElement.Description = newElement.Description;
+            firstElement.Name = newElement.Name;
             await _repository.UpdateAsync(firstElement);
             var updatedElement = await _repository.GetAsync(idFirstElement);
 
             // elements that change
-            Assert.AreEqual(newElement.Description, updatedElement.Description);
+            Assert.AreEqual(newElement.Name, updatedElement.Name);
             Assert.AreEqual(newElement.Bank, updatedElement.Bank);
             // detail not change
             Assert.AreEqual(detailFirstElement, updatedElement.Detail);

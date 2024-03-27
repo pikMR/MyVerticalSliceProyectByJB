@@ -30,9 +30,11 @@ namespace ServiMotor.Features.Extracts
         public class CommandHandler : IRequestHandler<Command, string>
         {
             private readonly IBaseRepository<Extract> _repositoryExtract;
+            private readonly IMediator _mediator;
 
-            public CommandHandler(IBaseRepository<Extract> repository)
+            public CommandHandler(IBaseRepository<Extract> repository, IMediator mediator)
             {
+                _mediator = mediator;
                 _repositoryExtract = repository;
             }
 
@@ -41,7 +43,7 @@ namespace ServiMotor.Features.Extracts
                 if (request.Id != null)
                 {
                     var extract = await _repositoryExtract.GetAsync(request.Id);
-                    extract.UpdateResume(new ExtractDeleteDomainEvent(extract._id, extract.BranchOffice._id, extract.Bank._id));
+                    await _mediator.Publish(new ExtractDeleteDomainEvent(extract));
                     await _repositoryExtract.DeleteAsync(request.Id);
                 }
 

@@ -4,7 +4,6 @@ using ServiMotor.Business.Shared;
 using ServiMotor.Features.Banks;
 using ServiMotor.Infraestructure;
 using ServiMotor.IntegrationTests.Configuration;
-using ServiMotorAPI.Controllers;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,7 +17,6 @@ namespace ServiMotor.IntegrationTests
     {
         private IBaseRepository<Business.Models.Bank> _repository;
         private Faker<Business.Models.Bank> fakerBank;
-        private BankController controller;
         private HttpClient _client;
 
 

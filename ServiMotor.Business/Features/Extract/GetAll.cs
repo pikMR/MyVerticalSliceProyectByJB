@@ -34,7 +34,7 @@ namespace ServiMotor.Features.Extracts
             public record ExtractDto
             {
                 public string Id { get; set; }
-                public string Description { get; set; }
+                public string Name { get; set; }
                 public BankDto Bank { get; set; }
                 public string Date { get; set; }
                 public decimal Balance { get; set; }

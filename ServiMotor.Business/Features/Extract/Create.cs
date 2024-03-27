@@ -14,7 +14,7 @@ namespace ServiMotor.Features.Extracts
     {
         public class Command : IRequest<string>
         {
-            public string Description { get; set; }
+            public string Name { get; set; }
             public Banks.Create.Command Bank { get; set; }
             public DateTime Date { get; set; }
             public decimal Balance { get; set; }
@@ -30,7 +30,7 @@ namespace ServiMotor.Features.Extracts
         {
             public CommandValidator()
             {
-                RuleFor(m => m.Description).NotNull();
+                RuleFor(m => m.Name).NotNull();
                 RuleFor(m => m.Date).NotNull().GreaterThan(DateTime.MinValue);
                 RuleFor(m => m.Balance).NotNull();
                 RuleFor(m => m.Bank).NotNull();
@@ -59,7 +59,7 @@ namespace ServiMotor.Features.Extracts
                 extract.BranchOffice = branchOffice;
                 extract.Bank = bank;
                 await _repositoryExtract.CreateAsync(extract);
-                extract.UpdateCreateResume(new ExtractCreateDomainEvent(extract._id, extract.BranchOffice._id, extract.Bank._id));
+                await _mediator.Publish(new ExtractCreateDomainEvent(extract), cancellationToken);
                 return extract._id.ToString();
             }
         }

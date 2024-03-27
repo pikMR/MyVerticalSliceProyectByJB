@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace ServiMotor.Business.Models
 {
@@ -16,10 +15,6 @@ namespace ServiMotor.Business.Models
         {
 
         }
-
-        [Required]
-        [StringLength(16, ErrorMessage = "Unidad no puede tener mas de 16 caracteres.")]
-        public string Name { get; set; }
 
         public override bool Equals(object obj)
         {

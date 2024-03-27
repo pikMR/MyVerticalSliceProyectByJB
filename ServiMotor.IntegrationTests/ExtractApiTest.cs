@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using ServiMotor.Business.Models;
 using ServiMotor.Business.Shared;
-using ServiMotor.Controllers;
 using ServiMotor.Features.Extracts;
 using ServiMotor.Infraestructure;
 using ServiMotor.IntegrationTests.Configuration;
@@ -22,8 +21,8 @@ namespace ServiMotor.IntegrationTests
         private IBaseRepository<Extract> _extractRepository;
         private IBaseRepository<Bank> _bankRepository;
         private IBaseRepository<BranchOffice> _branchRepository;
+        private IBaseRepository<Resume> _resumeRepository;
         private Faker<Extract> fakerExtract;
-        private ExtractController controller;
         private HttpClient _client;
 
         [SetUp]
@@ -31,6 +30,7 @@ namespace ServiMotor.IntegrationTests
         {
             DbFixture DbFix = new();
             DbFix.Dispose();
+            _resumeRepository = new BaseRepository<Resume>(new MongoBookDBContext(DbFix.DbContextSettings));
             _extractRepository = new BaseRepository<Extract>(new MongoBookDBContext(DbFix.DbContextSettings));
             _bankRepository = new BaseRepository<Bank>(new MongoBookDBContext(DbFix.DbContextSettings));
             _branchRepository = new BaseRepository<BranchOffice>(new MongoBookDBContext(DbFix.DbContextSettings));
@@ -38,6 +38,7 @@ namespace ServiMotor.IntegrationTests
             _client = new CustomWebApplicationFactory(DbFix.DbContextSettings).CreateClient();
 
             // delete all elements
+            _resumeRepository.DeleteAll();
             _bankRepository.DeleteAll();
             _branchRepository.DeleteAll();
             _extractRepository.DeleteAll();
@@ -70,7 +71,7 @@ namespace ServiMotor.IntegrationTests
                 PropertyNameCaseInsensitive = true // Esto permite que las propiedades coincidan incluso si tienen diferentes casos.
             });
 
-            Assert.AreEqual(2, extractsObjects.Extracts.Count());
+            Assert.AreEqual(2, extractsObjects.Extracts.Length);
             Assert.True(extractsObjects.Extracts.All(x => x.Id != null));
         }
 
@@ -91,7 +92,7 @@ namespace ServiMotor.IntegrationTests
                 PropertyNameCaseInsensitive = true // Esto permite que las propiedades coincidan incluso si tienen diferentes casos.
             });
 
-            Assert.AreEqual(5, extractsObjects.Extracts.Count());
+            Assert.AreEqual(5, extractsObjects.Extracts.Length);
             Assert.True(extractsObjects.Extracts.All(x => x.Id != null));
         }
 
@@ -109,7 +110,7 @@ namespace ServiMotor.IntegrationTests
                 PropertyNameCaseInsensitive = true // Esto permite que las propiedades coincidan incluso si tienen diferentes casos.
             });
 
-            Assert.AreEqual(5, extractsObjects.Extracts.Count());
+            Assert.AreEqual(5, extractsObjects.Extracts.Length);
             Assert.True(extractsObjects.Extracts.All(x => x.Id != null));
         }
 
@@ -124,7 +125,7 @@ namespace ServiMotor.IntegrationTests
 
             var newExtract = new Create.Command
             {
-                Description = "Test Description",
+                Name = "Test Description",
                 Date = DateTime.Now,
                 Balance = 100.50m,
                 Detail = "Test Detail",
@@ -146,19 +147,21 @@ namespace ServiMotor.IntegrationTests
             var response = await _client.PostAsync("/Extract", jsonContent);
             var idResponse = await response.Content.ReadAsStringAsync();
             var getExtract = await _extractRepository.GetFirstAsync();
+            var getResume = await _resumeRepository.GetFirstAsync();
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
             Assert.NotNull(idResponse);
             Assert.NotNull(getExtract);
-            Assert.AreEqual("Test Description", getExtract.Description);
+            Assert.AreEqual("Test Description", getExtract.Name);
             Assert.AreEqual(100.50m, getExtract.Balance);
             Assert.AreEqual("Test Detail", getExtract.Detail);
             Assert.AreEqual(bank.Name, getExtract.Bank.Name);
             Assert.AreEqual(bank._id.ToString(), getExtract.Bank._id.ToString());
             Assert.AreEqual(branchOffice.Name, getExtract.BranchOffice.Name);
             Assert.AreEqual(branchOffice._id.ToString(), getExtract.BranchOffice._id.ToString());
+            Assert.NotNull(getResume);
         }
 
         [Test]
@@ -177,7 +180,7 @@ namespace ServiMotor.IntegrationTests
             var updatedExtract = new Update.Command
             {
                 Id = exampleExtract._id.ToString(),
-                Description = "Test Description 2",
+                Name = "Test Description 2",
                 Date = DateTime.Now,
                 Balance = 101.50m,
                 Detail = "Test Detail 2",
@@ -197,14 +200,14 @@ namespace ServiMotor.IntegrationTests
 
             // Act
             var response = await _client.PutAsync("/Extract", jsonContent);
-            var idResponse = await response.Content.ReadAsStringAsync();
+            _ = await response.Content.ReadAsStringAsync();
             var getExtract = await _extractRepository.GetFirstAsync();
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(getExtract);
-            Assert.AreEqual("Test Description 2", getExtract.Description);
+            Assert.AreEqual("Test Description 2", getExtract.Name);
             Assert.AreEqual(101.50m, getExtract.Balance);
             Assert.AreEqual("Test Detail 2", getExtract.Detail);
             Assert.AreEqual(bank.Name, getExtract.Bank.Name);
@@ -213,6 +216,7 @@ namespace ServiMotor.IntegrationTests
             Assert.AreEqual(branchOffice._id, getExtract.BranchOffice._id);
         }
 
+        [Test]
         public async Task It_should_update_one_extract_and_bank_and_branchOffice()
         {
             var bank = HelperBogus.GetFakerBank().Generate(1).First();
@@ -223,7 +227,7 @@ namespace ServiMotor.IntegrationTests
             var updatedExtract = new Update.Command
             {
                 Id = exampleExtract._id.ToString(),
-                Description = "Test Description 2",
+                Name = "Test Description 2",
                 Date = DateTime.Now,
                 Balance = 101.50m,
                 Detail = "Test Detail 2",
@@ -241,19 +245,63 @@ namespace ServiMotor.IntegrationTests
 
             // Act
             var response = await _client.PutAsync("/Extract", jsonContent);
-            var idResponse = await response.Content.ReadAsStringAsync();
+            _ = await response.Content.ReadAsStringAsync();
             var getExtract = await _extractRepository.GetFirstAsync();
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(getExtract);
-            Assert.AreEqual("Test Description 2", getExtract.Description);
+            Assert.AreEqual("Test Description 2", getExtract.Name);
             Assert.AreEqual(101.50m, getExtract.Balance);
             Assert.AreEqual("Test Detail 2", getExtract.Detail);
             Assert.AreEqual(bank.Name, getExtract.Bank.Name);
             Assert.NotNull(getExtract.Bank._id);
             Assert.AreEqual(branchOffice.Name, getExtract.BranchOffice.Name);
+            Assert.NotNull(getExtract.BranchOffice._id);
+        }
+
+        [Test]
+        public async Task It_should_update_one_extract_with_resume_and_publish_update()
+        {
+            var exampleExtract = fakerExtract.Generate(1).First();
+            await _bankRepository.CreateAsync(exampleExtract.Bank);
+            await _branchRepository.CreateAsync(exampleExtract.BranchOffice);
+            await _extractRepository.CreateAsync(exampleExtract);
+            await _resumeRepository.CreateAsync(new Resume(exampleExtract));
+
+            var updatedExtract = new Update.Command
+            {
+                Id = exampleExtract._id.ToString(),
+                Name = "Test Description 2",
+                Date = DateTime.Now,
+                Balance = 101.50m,
+                Detail = "Test Detail 2",
+                Bank = new Features.Banks.Create.Command()
+                {
+                    Name = exampleExtract.Bank.Name,
+                },
+                BranchOffice = new Features.BranchOffices.Create.Command()
+                {
+                    Name = exampleExtract.BranchOffice.Name,
+                },
+            };
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(updatedExtract), Encoding.UTF8, "application/json");
+
+            // Act
+            var response = await _client.PutAsync("/Extract", jsonContent);
+            _ = await response.Content.ReadAsStringAsync();
+            var getExtract = await _extractRepository.GetFirstAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(getExtract);
+            Assert.AreEqual("Test Description 2", getExtract.Name);
+            Assert.AreEqual(101.50m, getExtract.Balance);
+            Assert.AreEqual("Test Detail 2", getExtract.Detail);
+            Assert.NotNull(getExtract.Bank._id);
             Assert.NotNull(getExtract.BranchOffice._id);
         }
 

@@ -1,15 +1,10 @@
 ﻿using MongoDB.Bson;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace ServiMotor.Business.Models
 {
     public class Bank : RootEntity
     {
-        [Required]
-        [StringLength(16, ErrorMessage = "Unidad no puede tener mas de 16 caracteres.")]
-        public string Name { get; set; }
-
         public Bank() { }
 
         public Bank(string bankName)

@@ -1,8 +1,6 @@
-﻿using MongoDB.Driver;
-using ServiMotor.Business.Features.DomainEvents;
+﻿using ServiMotor.Business.Features.DomainEvents;
 using ServiMotor.Business.Models;
 using ServiMotor.Business.Shared;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,13 +21,12 @@ namespace ServiMotor.Business.Features.Resumes.Events
         public async Task Handle(ExtractDeleteDomainEvent notification, CancellationToken cancellationToken)
         {
             var resume = await this._resumeRepository.GetFirstAsync(x =>
-                x.IdBranchOffice.Id == notification.BranchOfficeId &&
-                x.IdBank.Id == notification.BankId);
+                x.BranchOffice._id == notification.Extract.BranchOffice._id &&
+                x.Bank._id == notification.Extract.Bank._id);
 
-            var extractRefToRemove = resume.Extracts.FirstOrDefault(extractRef => extractRef.Id == notification.Id);
-
-            if (resume.Extracts.Remove(extractRefToRemove))
+            if (resume.DeleteResumeExtract(notification.Id))
             {
+                // TODO compute()
                 await this._resumeRepository.UpdateAsync(resume);
             }
         }

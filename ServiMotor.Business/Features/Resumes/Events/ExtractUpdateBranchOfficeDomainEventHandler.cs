@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using AutoMapper;
+using MongoDB.Driver;
 using ServiMotor.Business.Features.DomainEvents;
 using ServiMotor.Business.Models;
 using ServiMotor.Business.Shared;
@@ -10,35 +11,45 @@ namespace ServiMotor.Business.Features.Resumes.Events
 {
     public sealed class ExtractUpdateBranchOfficeDomainEventHandler : IDomainEventHandler<ExtractUpdateBranchOfficeDomainEvent>
     {
-        private readonly IBaseRepository<Extract> _extractRepository;
         private readonly IBaseRepository<Resume> _resumeRepository;
+        private readonly IMapper _mapper;
 
-        public ExtractUpdateBranchOfficeDomainEventHandler(IBaseRepository<Extract> extractRepository, IBaseRepository<Resume> resumeRepository)
+        public ExtractUpdateBranchOfficeDomainEventHandler(IBaseRepository<Resume> resumeRepository, IMapper mapper)
         {
-            this._extractRepository = extractRepository;
             this._resumeRepository = resumeRepository;
+            this._mapper = mapper;
         }
 
         public async Task Handle(ExtractUpdateBranchOfficeDomainEvent notification, CancellationToken cancellationToken)
         {
-            var OldResume = await this._resumeRepository.GetFirstAsync(x =>
-                x.IdBranchOffice.Id == notification.OldBranchOfficeId &&
-                x.IdBank.Id == notification.BankId);
+            var oldResume = await this._resumeRepository.GetFirstAsync(x =>
+                x.BranchOffice._id == notification.OldExtract.BranchOffice._id &&
+                x.Bank._id == notification.OldExtract.Bank._id);
 
-            var NewResume = await this._resumeRepository.GetFirstAsync(x =>
-                x.IdBranchOffice.Id == notification.NewBranchOfficeId &&
-                x.IdBank.Id == notification.BankId);
+            var newResume = await this._resumeRepository.GetFirstAsync(x =>
+                x.BranchOffice._id == notification.NewExtract.BranchOffice._id &&
+                x.Bank._id == notification.NewExtract.Bank._id);
 
-            var extractRefToRemove = OldResume.Extracts.FirstOrDefault(extractRef => extractRef.Id == notification.Id);
-
-            if (OldResume.Extracts.Remove(extractRefToRemove))
+            if (newResume == null)
             {
-                await this._resumeRepository.UpdateAsync(OldResume);
+                newResume = new Resume(notification.NewExtract);
+                await this._resumeRepository.CreateAsync(newResume);
             }
-
-            if (NewResume.Extracts.Add(new MongoDBRef("extract", notification.Id)))
+            else
             {
-                await this._resumeRepository.CreateAsync(NewResume);
+                var extractRefToRemove = oldResume.Extracts.FirstOrDefault(extractRef => extractRef._id == notification.Id);
+
+                if (oldResume.Extracts.Remove(extractRefToRemove))
+                {
+                    // TODO OldResume.compute()
+                    await this._resumeRepository.UpdateAsync(oldResume);
+                }
+
+                if (newResume.Extracts.Add(_mapper.Map<ResumeExtract>(notification.NewExtract)))
+                {
+                    // TODO OldResume.compute()
+                    await this._resumeRepository.UpdateAsync(newResume);
+                }
             }
         }
     }

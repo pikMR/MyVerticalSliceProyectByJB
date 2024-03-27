@@ -1,6 +1,6 @@
-﻿using MongoDB.Bson;
+﻿using ServiMotor.Business.Models;
 
 namespace ServiMotor.Business.Features.DomainEvents;
 
-public sealed record ExtractCreateDomainEvent(ObjectId Id, ObjectId BranchOfficeId, ObjectId BankId) : DomainEvent(Id);
+public sealed record ExtractCreateDomainEvent(Extract Extract) : DomainEvent(Extract._id);
 

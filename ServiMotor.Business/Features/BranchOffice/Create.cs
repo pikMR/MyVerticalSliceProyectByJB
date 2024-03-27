@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
-using MongoDB.Bson;
 using ServiMotor.Business.Models;
 using ServiMotor.Business.Shared;
 using System;
@@ -59,12 +58,11 @@ namespace ServiMotor.Features.BranchOffices
                 }
                 else
                 {
-                    var id = ObjectId.Parse(idBranchOffice);
-                    branchOffice = await _repository.GetFirstAsync(x => x._id.Equals(id));
+                    branchOffice = await _repository.GetAsync(idBranchOffice);
 
                     if (branchOffice == null)
                     {
-                        throw new ArgumentException($"BranchOffice with id {id} not exist");
+                        throw new ArgumentException($"BranchOffice with id {idBranchOffice} not exist");
                     }
                 }
 

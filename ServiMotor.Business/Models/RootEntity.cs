@@ -4,6 +4,8 @@ namespace ServiMotor.Business.Models
 {
     public class RootEntity
     {
+        public string Name { get; set; }
+
         public ObjectId _id { get; set; }
 
         public RootEntity(ObjectId id)
@@ -11,9 +13,6 @@ namespace ServiMotor.Business.Models
             _id = id;
         }
 
-        public RootEntity()
-        {
-
-        }
+        public RootEntity() { }
     }
 }

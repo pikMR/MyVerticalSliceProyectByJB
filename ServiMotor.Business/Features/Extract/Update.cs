@@ -15,7 +15,7 @@ namespace ServiMotor.Features.Extracts
         public class Command : IRequest<string>
         {
             public string Id { get; set; }
-            public string Description { get; set; }
+            public string Name { get; set; }
             public Banks.Create.Command Bank { get; set; }
             public DateTime Date { get; set; }
             public decimal Balance { get; set; }
@@ -60,9 +60,13 @@ namespace ServiMotor.Features.Extracts
                     newExtract.BranchOffice = branchOffice;
                     newExtract.Bank = bank;
 
-                    if (!newExtract.BranchOffice._id.Equals(oldExtract.BranchOffice._id))
+                    if (!newExtract.HaveSameBranchOffice(oldExtract))
                     {
-                        newExtract.UpdateResume(new ExtractUpdateBranchOfficeDomainEvent(newExtract._id, oldExtract.BranchOffice._id, newExtract.BranchOffice._id, newExtract.Bank._id));
+                        await _mediator.Publish(new ExtractUpdateBranchOfficeDomainEvent(newExtract, oldExtract));
+                    }
+                    else
+                    {
+                        await _mediator.Publish(new ExtractUpdateDomainEvent(newExtract, oldExtract));
                     }
 
                     await _repositoryExtract.UpdateAsync(newExtract);

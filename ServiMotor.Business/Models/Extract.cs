@@ -1,22 +1,18 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using ServiMotor.Business.Features.DomainEvents;
+using ServiMotor.Business.Abstractions;
 using ServiMotor.Business.Shared;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace ServiMotor.Business.Models
 {
-    public class Extract : AggregateRoot
+    public class Extract : AggregateRoot, IAuditableEntity
     {
         public Extract()
         {
             this._id = ObjectId.GenerateNewId();
         }
-
-        [Required]
-        [Display(Name = "Descripcion")]
-        public string Description { get; set; }
 
         [Required]
         [Display(Name = "Sucursal")]
@@ -36,9 +32,14 @@ namespace ServiMotor.Business.Models
 
         [Display(Name = "Banco")]
         public Bank Bank { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
+        public DateTime? ModifiedOnUtc { get; set; }
 
-        internal void UpdateResume(IDomainEvent extractCreateDomainEvent) => RaiseDomainEvent(extractCreateDomainEvent);
+        internal bool HaveSameBranchOffice(Extract oldExtract)
+        {
+            return this.BranchOffice._id.Equals(oldExtract.BranchOffice._id);
+        }
 
-        internal void UpdateCreateResume(ExtractCreateDomainEvent extractCreateDomainEvent) => RaiseDomainEvent(extractCreateDomainEvent);
+        internal void UpdateOrCreateResume(IDomainEvent domainEvent) => RaiseDomainEvent(domainEvent);
     }
 }
